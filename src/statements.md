@@ -145,12 +145,6 @@ if true {
 };
 ```
 
-r[statement.attribute]
-## Attributes on Statements
-
-Statements accept [outer attributes].
-The attributes that have meaning on a statement are [`cfg`], and [the lint check attributes].
-
 [block]: expressions/block-expr.md
 [expression]: expressions.md
 [function]: items/functions.md
