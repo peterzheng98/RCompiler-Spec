@@ -13,3 +13,8 @@ calling functions that panic, or any other situation that causes the program to 
 r[undefined-behavior.uninitialized]
 ### Uninitialized variables
 Using uninitialized variables is considered undefined behavior. This includes reading from a variable that has not been initialized, or using a variable that has been initialized but not assigned a value.
+r[undefined-behavior.ownership]
+### Ownership violations
+To simplify the language, ownership violations are considered undefined behavior. This includes using a value after it has been moved, or using a value that has been dropped.
+
+You can simply think that your compiler do not need to handle ownership violations, and it is not required to do so.
