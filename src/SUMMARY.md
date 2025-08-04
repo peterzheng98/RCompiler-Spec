@@ -4,6 +4,8 @@
 
 - [Notation](notation.md)
 
+- [Undefined behavior](undefined-behavior.md)
+
 - [Lexical structure](lexical-structure.md)
     - [Input format](input-format.md)
     - [Keywords](keywords.md)
