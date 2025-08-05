@@ -6,6 +6,17 @@ If any section contains undefined behavior mentioned in this section, this chapt
 
 
 ## Undefined behavior list.
+
+r[undefined-behavior.source-size]
+### Source code size limit
+
+Source code files exceeding 1M bytes in size are considered undefined behavior.
+
+r[undefined-behavior.non-ascii]
+### Non-ASCII characters
+
+Source code containing any extended ASCII characters or multi-byte Unicode characters (all characters with code points greater than 127) is considered undefined behavior. Only 7-bit ASCII characters (code points 0-127) are allowed.
+
 r[undefined-behavior.panic]
 ### Panic
 
@@ -15,12 +26,36 @@ calling functions that panic, or any other situation that causes the program to 
 r[undefined-behavior.uninitialized]
 
 ### Uninitialized variables
+
 Using uninitialized variables is considered undefined behavior. This includes reading from a variable that has not been initialized, or using a variable that has been initialized but not assigned a value.
 
 r[undefined-behavior.ownership]
 
 ### Ownership violations
+
 To simplify the language, ownership violations are considered undefined behavior. This includes using a value after it has been moved, or using a value that has been dropped.
 
 You can simply think that your compiler do not need to handle ownership violations, and it is not required to do so.
+
+r[undefined-behavior.macros]
+### Syntactic macros
+
+All syntactic macros are considered undefined behavior. This includes:
+- Declarative macros (`macro_rules!`)
+- Procedural macros
+- Attribute macros
+- Function-like macros
+- Any macro invocation or definition
+
+r[undefined-behavior.unsafe]
+### Unsafe operations
+
+All unsafe operations are considered undefined behavior. 
+
+r[undefined-behavior.lifetimes]
+### Lifetime-related code
+
+All code that would cause lifetime errors and all lifetime-related syntax are considered undefined behavior.
+
+And the compiler is not required to perform any lifetime analysis or checking.
 

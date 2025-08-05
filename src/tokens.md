@@ -16,7 +16,6 @@ Token ->
     | RAW_C_STRING_LITERAL
     | INTEGER_LITERAL
     | FLOAT_LITERAL
-    | LIFETIME_TOKEN
     | PUNCTUATION
     | RESERVED_TOKEN
 ```
@@ -29,7 +28,6 @@ into the following kinds of tokens:
 * [Keywords]
 * [Identifiers][identifier]
 * [Literals](#literals)
-* [Lifetimes](#lifetimes-and-loop-labels)
 * [Punctuation](#punctuation)
 * [Delimiters](#delimiters)
 
@@ -49,14 +47,14 @@ Literals are tokens used in [literal expressions].
 
 |                                              | Example         | `#`&nbsp;sets[^nsets] | Characters  | Escapes             |
 |----------------------------------------------|-----------------|------------|-------------|---------------------|
-| [Character](#character-literals)             | `'H'`           | 0          | All Unicode | [Quote](#quote-escapes) & [ASCII](#ascii-escapes) & [Unicode](#unicode-escapes) |
-| [String](#string-literals)                   | `"hello"`       | 0          | All Unicode | [Quote](#quote-escapes) & [ASCII](#ascii-escapes) & [Unicode](#unicode-escapes) |
-| [Raw string](#raw-string-literals)           | `r#"hello"#`    | <256       | All Unicode | `N/A`                                                      |
+| [Character](#character-literals)             | `'H'`           | 0          | All ASCII   | [Quote](#quote-escapes) & [ASCII](#ascii-escapes) |
+| [String](#string-literals)                   | `"hello"`       | 0          | All ASCII   | [Quote](#quote-escapes) & [ASCII](#ascii-escapes) |
+| [Raw string](#raw-string-literals)           | `r#"hello"#`    | <256       | All ASCII   | `N/A`                                                      |
 | [Byte](#byte-literals)                       | `b'H'`          | 0          | All ASCII   | [Quote](#quote-escapes) & [Byte](#byte-escapes)                               |
 | [Byte string](#byte-string-literals)         | `b"hello"`      | 0          | All ASCII   | [Quote](#quote-escapes) & [Byte](#byte-escapes)                               |
 | [Raw byte string](#raw-byte-string-literals) | `br#"hello"#`   | <256       | All ASCII   | `N/A`                                                      |
-| [C string](#c-string-literals)               | `c"hello"`      | 0          | All Unicode | [Quote](#quote-escapes) & [Byte](#byte-escapes) & [Unicode](#unicode-escapes)   |
-| [Raw C string](#raw-c-string-literals)       | `cr#"hello"#`   | <256       | All Unicode | `N/A`                                                                           |
+| [C string](#c-string-literals)               | `c"hello"`      | 0          | All ASCII   | [Quote](#quote-escapes) & [Byte](#byte-escapes) |
+| [Raw C string](#raw-c-string-literals)       | `cr#"hello"#`   | <256       | All ASCII   | `N/A`                                                                           |
 
 [^nsets]: The number of `#`s on each side of the same literal must be equivalent.
 
@@ -83,12 +81,6 @@ Literals are tokens used in [literal expressions].
 | `\\` | Backslash |
 | `\0` | Null |
 
-#### Unicode escapes
-
-|   | Name |
-|---|------|
-| `\u{7FFF}` | 24-bit Unicode character code (up to 6 digits) |
-
 #### Quote escapes
 
 |   | Name |
@@ -104,9 +96,9 @@ Literals are tokens used in [literal expressions].
 | Hex integer | `0xff` | `N/A` |
 | Octal integer | `0o77` | `N/A` |
 | Binary integer | `0b1111_0000` | `N/A` |
-| Floating-point | `123.0E+77` | `Optional` |
+| Floating-point | `123.0` | `N/A` (originally supported, but not in this specification) |
 
-[^nl]: All number literals allow `_` as a visual separator: `1_234.0E+18f64`
+[^nl]: All number literals allow `_` as a visual separator: `1_234.0f64`
 
 r[lex.token.literal.suffix]
 #### Suffixes
@@ -154,7 +146,7 @@ r[lex.token.literal.char.syntax]
 ```grammar,lexer
 CHAR_LITERAL ->
     `'`
-        ( ~[`'` `\` LF CR TAB] | QUOTE_ESCAPE | ASCII_ESCAPE | UNICODE_ESCAPE )
+        ( ~[`'` `\` LF CR TAB] | QUOTE_ESCAPE | ASCII_ESCAPE )
     `'` SUFFIX?
 
 QUOTE_ESCAPE -> `\'` | `\"`
@@ -163,12 +155,8 @@ ASCII_ESCAPE ->
       `\x` OCT_DIGIT HEX_DIGIT
     | `\n` | `\r` | `\t` | `\\` | `\0`
 
-UNICODE_ESCAPE ->
-    `\u{` ( HEX_DIGIT `_`* ){1..6} `}`
-```
-
 r[lex.token.literal.char.intro]
-A _character literal_ is a single Unicode character enclosed within two
+A _character literal_ is a single ASCII character enclosed within two
 `U+0027` (single-quote) characters, with the exception of `U+0027` itself,
 which must be _escaped_ by a preceding `U+005C` character (`\`).
 
@@ -182,7 +170,6 @@ STRING_LITERAL ->
         ~[`"` `\` CR]
       | QUOTE_ESCAPE
       | ASCII_ESCAPE
-      | UNICODE_ESCAPE
       | STRING_CONTINUE
     )* `"` SUFFIX?
 
@@ -190,7 +177,7 @@ STRING_CONTINUE -> `\` LF
 ```
 
 r[lex.token.literal.str.intro]
-A _string literal_ is a sequence of any Unicode characters enclosed within two
+A _string literal_ is a sequence of any ASCII characters enclosed within two
 `U+0022` (double-quote) characters, with the exception of `U+0022` itself,
 which must be _escaped_ by a preceding `U+005C` character (`\`).
 
@@ -211,14 +198,7 @@ following forms:
 r[lex.token.literal.char-escape.ascii]
 * A _7-bit code point escape_ starts with `U+0078` (`x`) and is
   followed by exactly two _hex digits_ with value up to `0x7F`. It denotes the
-  ASCII character with value equal to the provided hex value. Higher values are
-  not permitted because it is ambiguous whether they mean Unicode code points or
-  byte values.
-
-r[lex.token.literal.char-escape.unicode]
-* A _24-bit code point escape_ starts with `U+0075` (`u`) and is followed
-  by up to six _hex digits_ surrounded by braces `U+007B` (`{`) and `U+007D`
-  (`}`). It denotes the Unicode code point equal to the provided hex value.
+  ASCII character with value equal to the provided hex value.
 
 r[lex.token.literal.char-escape.whitespace]
 * A _whitespace escape_ is one of the characters `U+006E` (`n`), `U+0072`
@@ -251,11 +231,11 @@ Raw string literals do not process any escapes. They start with the character
 `U+0022` (double-quote) character.
 
 r[lex.token.literal.str-raw.body]
-The _raw string body_ can contain any sequence of Unicode characters other than `U+000D` (CR).
+The _raw string body_ can contain any sequence of ASCII characters other than `U+000D` (CR).
 It is terminated only by another `U+0022` (double-quote) character, followed by the same number of `U+0023` (`#`) characters that preceded the opening `U+0022` (double-quote) character.
 
 r[lex.token.literal.str-raw.content]
-All Unicode characters contained in the raw string body represent themselves,
+All ASCII characters contained in the raw string body represent themselves,
 the characters `U+0022` (double-quote) (except when followed by at least as
 many `U+0023` (`#`) characters as were used to start the raw string literal) or
 `U+005C` (`\`) do not have any special meaning.
@@ -404,14 +384,13 @@ C_STRING_LITERAL ->
     `c"` (
         ~[`"` `\` CR NUL]
       | BYTE_ESCAPE _except `\0` or `\x00`_
-      | UNICODE_ESCAPE _except `\u{0}`, `\u{00}`, …, `\u{000000}`_
       | STRING_CONTINUE
     )* `"` SUFFIX?
 
 ```
 
 r[lex.token.str-c.intro]
-A _C string literal_ is a sequence of Unicode characters and _escapes_,
+A _C string literal_ is a sequence of ASCII characters and _escapes_,
 preceded by the characters `U+0063` (`c`) and `U+0022` (double-quote), and
 followed by the character `U+0022`. If the character `U+0022` is present within
 the literal, it must be _escaped_ by a preceding `U+005C` (`\`) character.
@@ -439,12 +418,6 @@ r[lex.token.str-c.escape-byte]
 * A _byte escape_ escape starts with `U+0078` (`x`) and is followed by exactly
   two _hex digits_. It denotes the byte equal to the provided hex value.
 
-r[lex.token.str-c.escape-unicode]
-* A _24-bit code point escape_ starts with `U+0075` (`u`) and is followed
-  by up to six _hex digits_ surrounded by braces `U+007B` (`{`) and `U+007D`
-  (`}`). It denotes the Unicode code point equal to the provided hex value,
-  encoded as UTF-8.
-
 r[lex.token.str-c.escape-whitespace]
 * A _whitespace escape_ is one of the characters `U+006E` (`n`), `U+0072`
   (`r`), or `U+0074` (`t`), denoting the bytes values `0x0A` (ASCII LF),
@@ -453,19 +426,6 @@ r[lex.token.str-c.escape-whitespace]
 r[lex.token.str-c.escape-slash]
 * The _backslash escape_ is the character `U+005C` (`\`) which must be
   escaped in order to denote its ASCII encoding `0x5C`.
-
-r[lex.token.str-c.char-unicode]
-A C string represents bytes with no defined encoding, but a C string literal
-may contain Unicode characters above `U+007F`. Such characters will be replaced
-with the bytes of that character's UTF-8 representation.
-
-The following C string literals are equivalent:
-
-```rust
-c"æ";        // LATIN SMALL LETTER AE (U+00E6)
-c"\u{00E6}";
-c"\xC3\xA6";
-```
 
 r[lex.token.str-c.edition2021]
 > [!EDITION-2021]
@@ -490,11 +450,11 @@ character `U+0063` (`c`), followed by `U+0072` (`r`), followed by fewer than 256
 of the character `U+0023` (`#`), and a `U+0022` (double-quote) character.
 
 r[lex.token.str-c-raw.body]
-The _raw C string body_ can contain any sequence of Unicode characters other than `U+0000` (NUL) and `U+000D` (CR).
+The _raw C string body_ can contain any sequence of ASCII characters other than `U+0000` (NUL) and `U+000D` (CR).
 It is terminated only by another `U+0022` (double-quote) character, followed by the same number of `U+0023` (`#`) characters that preceded the opening `U+0022` (double-quote) character.
 
 r[lex.token.str-c-raw.content]
-All characters contained in the raw C string body represent themselves in UTF-8
+All characters contained in the raw C string body represent themselves in ASCII
 encoding. The characters `U+0022` (double-quote) (except when followed by at
 least as many `U+0023` (`#`) characters as were used to start the raw C string
 literal) or `U+005C` (`\`) do not have any special meaning.
@@ -571,7 +531,6 @@ r[lex.token.literal.int.kind-bin]
 
 r[lex.token.literal.int.restriction]
 Like any literal, an integer literal may be followed (immediately, without any spaces) by a suffix as described above.
-The suffix may not begin with `e` or `E`, as that would be interpreted as the exponent of a floating-point literal.
 See [Integer literal expressions] for the effect of these suffixes.
 
 Examples of integer literals which are accepted as literal expressions:
@@ -586,7 +545,6 @@ Examples of integer literals which are accepted as literal expressions:
 0xff;
 0xff_u8;
 0x01_f32; // integer 7986, not floating-point 1.0
-0x01_e3;  // integer 483, not floating-point 1000.0
 
 0o70;
 0o70_i16;
@@ -657,23 +615,18 @@ r[lex.token.literal.float.syntax]
 FLOAT_LITERAL ->
       DEC_LITERAL `.` _not immediately followed by `.`, `_` or an XID_Start character_
     | DEC_LITERAL `.` DEC_LITERAL SUFFIX_NO_E?
-    | DEC_LITERAL (`.` DEC_LITERAL)? FLOAT_EXPONENT SUFFIX?
-
-FLOAT_EXPONENT ->
-    (`e`|`E`) (`+`|`-`)? (DEC_DIGIT|`_`)* DEC_DIGIT (DEC_DIGIT|`_`)*
 ```
 
 r[lex.token.literal.float.form]
-A _floating-point literal_ has one of two forms:
+A _floating-point literal_ has one form:
 
 * A _decimal literal_ followed by a period character `U+002E` (`.`). This is
-  optionally followed by another decimal literal, with an optional _exponent_.
-* A single _decimal literal_ followed by an _exponent_.
+  optionally followed by another decimal literal.
 
 r[lex.token.literal.float.suffix]
 Like integer literals, a floating-point literal may be followed by a
 suffix, so long as the pre-suffix part does not end with `U+002E` (`.`).
-The suffix may not begin with `e` or `E` if the literal does not include an exponent.
+The suffix may not begin with `e` or `E`.
 See [Floating-point literal expressions] for the effect of these suffixes.
 
 Examples of floating-point literals which are accepted as literal expressions:
@@ -682,12 +635,11 @@ Examples of floating-point literals which are accepted as literal expressions:
 123.0f64;
 0.1f64;
 0.1f32;
-12E+99_f64;
 let x: f64 = 2.;
 ```
 
 This last example is different because it is not possible to use the suffix
-syntax with a floating point literal end.token.ing in a period. `2.f64` would attempt
+syntax with a floating point literal ending in a period. `2.f64` would attempt
 to call a method named `f64` on `2`.
 
 Note that `-1.0`, for example, is analyzed as two tokens: `-` followed by `1.0`.
@@ -697,10 +649,11 @@ Examples of floating-point literals which are not accepted as literal expression
 ```rust
 # #[cfg(false)] {
 2.0f80;
-2e5f80;
-2e5e6;
-2.0e5e6;
-1.3e10u64;
+12E+99_f64;  // exponent notation not supported
+2e5f80;      // exponent notation not supported
+2e5e6;       // exponent notation not supported
+2.0e5e6;     // exponent notation not supported
+1.3e10u64;   // exponent notation not supported
 # }
 ```
 
@@ -713,12 +666,9 @@ RESERVED_NUMBER ->
       BIN_LITERAL [`2`-`9`]
     | OCT_LITERAL [`8`-`9`]
     | ( BIN_LITERAL | OCT_LITERAL | HEX_LITERAL ) `.` _not immediately followed by `.`, `_` or an XID_Start character_
-    | ( BIN_LITERAL | OCT_LITERAL ) (`e`|`E`)
     | `0b` `_`* <end of input or not BIN_DIGIT>
     | `0o` `_`* <end of input or not OCT_DIGIT>
     | `0x` `_`* <end of input or not HEX_DIGIT>
-    | DEC_LITERAL ( `.` DEC_LITERAL )? (`e` | `E`) (`+` | `-`)? <end of input or not DEC_DIGIT>
-
 ```
 
 r[lex.token.literal.reserved.intro]
@@ -731,14 +681,8 @@ r[lex.token.literal.reserved.out-of-range]
 r[lex.token.literal.reserved.period]
 * An unsuffixed binary, octal, or hexadecimal literal followed, without intervening whitespace, by a period character (with the same restrictions on what follows the period as for floating-point literals).
 
-r[lex.token.literal.reserved.exp]
-* An unsuffixed binary or octal literal followed, without intervening whitespace, by the character `e` or `E`.
-
 r[lex.token.literal.reserved.empty-with-radix]
 * Input which begins with one of the radix prefixes but is not a valid binary, octal, or hexadecimal literal (because it contains no digits).
-
-r[lex.token.literal.reserved.empty-exp]
-* Input which has the form of a floating-point literal with no digits in the exponent.
 
 Examples of reserved forms:
 
@@ -746,52 +690,9 @@ Examples of reserved forms:
 0b0102;  // this is not `0b010` followed by `2`
 0o1279;  // this is not `0o127` followed by `9`
 0x80.0;  // this is not `0x80` followed by `.` and `0`
-0b101e;  // this is not a suffixed literal, or `0b101` followed by `e`
 0b;      // this is not an integer literal, or `0` followed by `b`
 0b_;     // this is not an integer literal, or `0` followed by `b_`
-2e;      // this is not a floating-point literal, or `2` followed by `e`
-2.0e;    // this is not a floating-point literal, or `2.0` followed by `e`
-2em;     // this is not a suffixed literal, or `2` followed by `em`
-2.0em;   // this is not a suffixed literal, or `2.0` followed by `em`
 ```
-
-r[lex.token.life]
-## Lifetimes and loop labels
-
-r[lex.token.life.syntax]
-```grammar,lexer
-LIFETIME_TOKEN ->
-      `'` IDENTIFIER_OR_KEYWORD _not immediately followed by `'`_
-    | `'_` _not immediately followed by `'`_
-    | RAW_LIFETIME
-
-LIFETIME_OR_LABEL ->
-      `'` NON_KEYWORD_IDENTIFIER _not immediately followed by `'`_
-    | RAW_LIFETIME
-
-RAW_LIFETIME ->
-    `'r#` IDENTIFIER_OR_KEYWORD _except `crate`, `self`, `super`, `Self` and not immediately followed by `'`_
-
-RESERVED_RAW_LIFETIME -> `'r#_` _not immediately followed by `'`_
-```
-
-r[lex.token.life.intro]
-Lifetime parameters and [loop labels] use LIFETIME_OR_LABEL tokens. Any
-LIFETIME_TOKEN will be accepted by the lexer, and for example, can be used in
-macros.
-
-r[lex.token.life.raw.intro]
-A raw lifetime is like a normal lifetime, but its identifier is prefixed by `r#`. (Note that the `r#` prefix is not included as part of the actual lifetime.)
-
-r[lex.token.life.raw.allowed]
-Unlike a normal lifetime, a raw lifetime may be any strict or reserved keyword except the ones listed above for `RAW_LIFETIME`.
-
-r[lex.token.life.raw.reserved]
-It is an error to use the RESERVED_RAW_LIFETIME token `'r#_` in order to avoid confusion with the [placeholder lifetime].
-
-r[lex.token.life.raw.edition2021]
-> [!EDITION-2021]
-> Raw lifetimes are accepted in the 2021 edition or later. In earlier additions the token `'r#lt` is lexed as `'r # lt`.
 
 r[lex.token.punct]
 ## Punctuation
@@ -934,9 +835,7 @@ RESERVED_TOKEN ->
     | RESERVED_NUMBER
     | RESERVED_POUNDS
     | RESERVED_RAW_IDENTIFIER
-    | RESERVED_RAW_LIFETIME
     | RESERVED_TOKEN_DOUBLE_QUOTE
-    | RESERVED_TOKEN_LIFETIME
     | RESERVED_TOKEN_POUND
     | RESERVED_TOKEN_SINGLE_QUOTE
 ```
@@ -954,9 +853,6 @@ RESERVED_TOKEN_SINGLE_QUOTE ->
 
 RESERVED_TOKEN_POUND ->
     ( IDENTIFIER_OR_KEYWORD _except `r` or `br` or `cr`_ | `_` ) `#`
-
-RESERVED_TOKEN_LIFETIME ->
-    `'` ( IDENTIFIER_OR_KEYWORD _except `r`_ | `_` ) `#`
 ```
 
 r[lex.token.reserved-prefix.intro]
@@ -970,9 +866,6 @@ Note that raw identifiers, raw string literals, and raw byte string literals may
 
 r[lex.token.reserved-prefix.strings]
 Similarly the `r`, `b`, `br`, `c`, and `cr` prefixes used in raw string literals, byte literals, byte string literals, raw byte string literals, C string literals, and raw C string literals are not interpreted as reserved prefixes.
-
-r[lex.token.reserved-prefix.life]
-Source input which would otherwise be lexically interpreted as a non-raw lifetime (or a keyword or `_`) which is immediately followed by a `#` character (without intervening whitespace) is identified as a reserved lifetime prefix.
 
 r[lex.token.reserved-prefix.edition2021]
 > [!EDITION-2021]
@@ -1052,7 +945,6 @@ r[lex.token.reserved-guards.edition2024]
 [keywords]: keywords.md
 [lazy-bool]: expressions/operator-expr.md#lazy-boolean-operators
 [literal expressions]: expressions/literal-expr.md
-[loop labels]: expressions/loop-expr.md
 [macros]: macros-by-example.md
 [match]: expressions/match-expr.md
 [negation]: expressions/operator-expr.md#negation-operators
@@ -1061,7 +953,6 @@ r[lex.token.reserved-guards.edition2024]
 [numeric types]: types/numeric.md
 [paths]: paths.md
 [patterns]: patterns.md
-[placeholder lifetime]: lifetime-elision.md
 [question]: expressions/operator-expr.md#the-try-propagation-expression
 [range]: expressions/range-expr.md
 [rangepat]: patterns.md#range-patterns

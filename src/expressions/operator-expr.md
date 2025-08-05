@@ -6,7 +6,6 @@ r[expr.operator.syntax]
 OperatorExpression ->
       BorrowExpression
     | DereferenceExpression
-    | TryPropagationExpression
     | NegationExpression
     | ArithmeticOrLogicalExpression
     | ComparisonExpression
@@ -188,127 +187,6 @@ let y = &mut 9;
 *y = 11;
 assert_eq!(*y, 11);
 ```
-
-r[expr.try]
-## The try propagation expression
-
-r[expr.try.syntax]
-```grammar,expressions
-TryPropagationExpression -> Expression `?`
-```
-
-r[expr.try.intro]
-The try propagation expression uses the value of the inner expression and the [`Try`] trait to decide whether to produce a value, and if so, what value to produce, or whether to return a value to the caller, and if so, what value to return.
-
-> [!EXAMPLE]
-> ```rust
-> # use std::num::ParseIntError;
-> fn try_to_parse() -> Result<i32, ParseIntError> {
->     let x: i32 = "123".parse()?; // `x` is `123`.
->     let y: i32 = "24a".parse()?; // Returns an `Err()` immediately.
->     Ok(x + y)                    // Doesn't run.
-> }
->
-> let res = try_to_parse();
-> println!("{res:?}");
-> # assert!(res.is_err())
-> ```
->
-> ```rust
-> fn try_option_some() -> Option<u8> {
->     let val = Some(1)?;
->     Some(val)
-> }
-> assert_eq!(try_option_some(), Some(1));
->
-> fn try_option_none() -> Option<u8> {
->     let val = None?;
->     Some(val)
-> }
-> assert_eq!(try_option_none(), None);
-> ```
->
-> ```rust
-> use std::ops::ControlFlow;
->
-> pub struct TreeNode<T> {
->     value: T,
->     left: Option<Box<TreeNode<T>>>,
->     right: Option<Box<TreeNode<T>>>,
-> }
->
-> impl<T> TreeNode<T> {
->     pub fn traverse_inorder<B>(&self, f: &mut impl FnMut(&T) -> ControlFlow<B>) -> ControlFlow<B> {
->         if let Some(left) = &self.left {
->             left.traverse_inorder(f)?;
->         }
->         f(&self.value)?;
->         if let Some(right) = &self.right {
->             right.traverse_inorder(f)?;
->         }
->         ControlFlow::Continue(())
->     }
-> }
-> #
-> # fn main() {
-> #     let n = TreeNode {
-> #         value: 1,
-> #         left: Some(Box::new(TreeNode{value: 2, left: None, right: None})),
-> #         right: None,
-> #     };
-> #     let v = n.traverse_inorder(&mut |t| {
-> #         if *t == 2 {
-> #             ControlFlow::Break("found")
-> #         } else {
-> #             ControlFlow::Continue(())
-> #         }
-> #     });
-> #     assert_eq!(v, ControlFlow::Break("found"));
-> # }
-> ```
-
-> [!NOTE]
-> The [`Try`] trait is currently unstable, and thus cannot be implemented for user types.
->
-> The try propagation expression is currently roughly equivalent to:
->
-> ```rust
-> # #![ feature(try_trait_v2) ]
-> # fn example() -> Result<(), ()> {
-> # let expr = Ok(());
-> match core::ops::Try::branch(expr) {
->     core::ops::ControlFlow::Continue(val) => val,
->     core::ops::ControlFlow::Break(residual) =>
->         return core::ops::FromResidual::from_residual(residual),
-> }
-> # Ok(())
-> # }
-> ```
-
-> [!NOTE]
-> The try propagation operator is sometimes called *the question mark operator*, *the `?` operator*, or *the try operator*.
-
-r[expr.try.restricted-types]
-The try propagation operator can be applied to expressions with the type of:
-
-- [`Result<T, E>`]
-    - `Result::Ok(val)` evaluates to `val`.
-    - `Result::Err(e)` returns `Result::Err(From::from(e))`.
-- [`Option<T>`]
-    - `Option::Some(val)` evaluates to `val`.
-    - `Option::None` returns `Option::None`.
-- [`ControlFlow<B, C>`][core::ops::ControlFlow]
-    - `ControlFlow::Continue(c)` evaluates to `c`.
-    - `ControlFlow::Break(b)` returns `ControlFlow::Break(b)`.
-- [`Poll<Result<T, E>>`][core::task::Poll]
-    - `Poll::Ready(Ok(val))` evaluates to `Poll::Ready(val)`.
-    - `Poll::Ready(Err(e))` returns `Poll::Ready(Err(From::from(e)))`.
-    - `Poll::Pending` evaluates to `Poll::Pending`.
-- [`Poll<Option<Result<T, E>>>`][`core::task::Poll`]
-    - `Poll::Ready(Some(Ok(val)))` evaluates to `Poll::Ready(Some(val))`.
-    - `Poll::Ready(Some(Err(e)))` returns `Poll::Ready(Some(Err(From::from(e))))`.
-    - `Poll::Ready(None)` evaluates to `Poll::Ready(None)`.
-    - `Poll::Pending` evaluates to `Poll::Pending`.
 
 r[expr.negate]
 ## Negation operators
@@ -942,7 +820,6 @@ Like assignment expressions, compound assignment expressions always produce [the
 > Try not to write code that depends on the evaluation order of operands in compound assignment expressions.
 > See [this test] for an example of using this dependency.
 
-[`Try`]: core::ops::Try
 [copies or moves]: ../expressions.md#moved-and-copied-types
 [dropping]: ../destructors.md
 [explicit discriminants]: ../items/enumerations.md#explicit-discriminants
@@ -973,7 +850,6 @@ Like assignment expressions, compound assignment expressions always produce [the
 (function() {
     var fragments = {
         "#slice-dst-pointer-to-pointer-cast": "operator-expr.html#pointer-to-pointer-cast",
-        "#the-question-mark-operator": "operator-expr.html#the-try-propagation-expression",
     };
     var target = fragments[window.location.hash];
     if (target) {

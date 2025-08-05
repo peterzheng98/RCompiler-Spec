@@ -29,7 +29,7 @@ MacroMatch ->
     | `$` `(` MacroMatch+ `)` MacroRepSep? MacroRepOp
 
 MacroFragSpec ->
-      `block` | `expr` | `expr_2021` | `ident` | `item` | `lifetime` | `literal`
+      `block` | `expr` | `expr_2021` | `ident` | `item` | `literal`
     | `meta` | `pat` | `pat_param` | `path` | `stmt` | `tt` | `ty` | `vis`
 
 MacroRepSep -> Token _except [delimiters][lex.token.delim] and [MacroRepOp]_
@@ -88,7 +88,7 @@ r[macro.decl.transcription.fragment]
 When forwarding a matched fragment to another macro-by-example, matchers in
 the second macro will see an opaque AST of the fragment type. The second macro
 can't use literal tokens to match the fragments in the matcher, only a
-fragment specifier of the same type. The `ident`, `lifetime`, and `tt`
+fragment specifier of the same type. The `ident` and `tt`
 fragment types are an exception, and *can* be matched by literal tokens. The
 following illustrates this restriction:
 
@@ -136,7 +136,6 @@ Valid fragment specifiers are:
   * `expr_2021`: an [Expression] except [UnderscoreExpression] and [ConstBlockExpression] (see [macro.decl.meta.edition2024])
   * `ident`: an [IDENTIFIER_OR_KEYWORD], [RAW_IDENTIFIER], or [`$crate`]
   * `item`: an [Item]
-  * `lifetime`: a [LIFETIME_TOKEN]
   * `literal`: matches `-`<sup>?</sup>[LiteralExpression]
   * `meta`: an [Attr], the contents of an attribute
   * `pat`: a [Pattern] (see [macro.decl.meta.edition2021])
@@ -401,7 +400,7 @@ r[macro.decl.hygiene]
 ## Hygiene
 
 r[macro.decl.hygiene.intro]
-Macros by example have _mixed-site hygiene_. This means that [loop labels], [block labels], and local variables are looked up at the macro definition site while other symbols are looked up at the macro invocation site. For example:
+Macros by example have _mixed-site hygiene_. This means that local variables are looked up at the macro definition site while other symbols are looked up at the macro invocation site. For example:
 
 ```rust
 let x = 1;
@@ -586,11 +585,9 @@ expansions, taking separators into account. This means:
 For more detail, see the [formal specification].
 
 [`macro_use` prelude]: names/preludes.md#macro_use-prelude
-[block labels]: expressions/loop-expr.md#labelled-block-expressions
 [delimiters]: tokens.md#delimiters
 [formal specification]: macro-ambiguity.md
 [Hygiene]: #hygiene
-[loop labels]: expressions/loop-expr.md#loop-labels
 [Metavariables]: #metavariables
 [Repetitions]: #repetitions
 [token]: tokens.md

@@ -77,14 +77,8 @@ r[paths.expr.intro]
 Paths in expressions allow for paths with generic arguments to be specified. They are
 used in various places in [expressions] and [patterns].
 
-r[paths.expr.turbofish]
-The `::` token is required before the opening `<` for generic arguments to avoid
-ambiguity with the less-than operator. This is colloquially known as "turbofish" syntax.
-
-```rust
-(0..10).collect::<Vec<_>>();
-Vec::<u8>::with_capacity(1024);
-```
+> [!WARNING]
+> Generic arguments with turbofish syntax (`::<...>`) are not supported in this specification.
 
 r[paths.expr.argument-order]
 The order of generic arguments is restricted to lifetime arguments, then type
@@ -100,17 +94,7 @@ mod m {
 const C: usize = m::C;
 fn f<const N: usize>() -> [u8; N] { [0; N] }
 
-let _ = f::<1>(); // Literal.
-let _: [_; 1] = f::<_>(); // Inferred const.
-let _: [_; 1] = f::<(((_)))>(); // Inferred const.
-let _ = f::<C>(); // Single segment path.
-let _ = f::<{ m::C }>(); // Multi-segment path must be braced.
-```
-
-```rust,compile_fail
-fn f<const N: usize>() -> [u8; N] { [0; _] }
-let _: [_; 1] = f::<{ _ }>();
-//                    ^ ERROR `_` not allowed here
+// Generic arguments with turbofish syntax are not supported
 ```
 
 > [!NOTE]
@@ -172,10 +156,6 @@ TypePathFnInputs -> Type (`,` Type)* `,`?
 r[paths.type.intro]
 Type paths are used within type definitions, trait bounds, type parameter bounds,
 and qualified paths.
-
-r[paths.type.turbofish]
-Although the `::` token is allowed before the generics arguments, it is not required
-because there is no ambiguity like there is in [PathInExpression].
 
 ```rust
 # mod ops {
@@ -286,7 +266,7 @@ r[paths.qualifiers.type-self.allowed-positions]
 `Self` can only be used as the first segment, without a preceding `::`.
 
 r[paths.qualifiers.type-self.no-generics]
-The `Self` path cannot include generic arguments (as in `Self::<i32>`).
+The `Self` path cannot include generic arguments.
 
 ```rust
 trait T {
