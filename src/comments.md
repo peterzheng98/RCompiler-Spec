@@ -38,11 +38,11 @@ r[comments.normal.examples]
    More content here
 */
 
-//   - Only a comment  
-//// - Also only a comment (multiple slashes are regular comments)
+//   - A comment  
+//// - Also a comment
 
-/*   - Only a comment */
-/*** - Only a comment (multiple asterisks are regular comments) */
+/*   - A comment */
+/*** - A comment */
 
 pub mod nested_comments {
     /* we can /* nest /* deeply */ nested */ comments */
