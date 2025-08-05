@@ -1,35 +1,36 @@
-r[undefined-behavior]
+r[ub]
 # Undefined behavior
 Undefined behavior is a term used to describe the result of executing code that does not conform to the rules of the language specification. In this project, undefined behavior means code with undefined behavior will not be in the test suite. If there is a test that has undefined behavior, any output is considered valid, and the test will not fail.
 
 If any section contains undefined behavior mentioned in this section, this chapter shall prevail.
 
 
-## Undefined behavior list.
+r[ub.overall]
+## Undefined behavior list (Overall)
 
-r[undefined-behavior.source-size]
+r[ub.overall.source-size]
 ### Source code size limit
 
 Source code files exceeding 1M bytes in size are considered undefined behavior.
 
-r[undefined-behavior.non-ascii]
+r[ub.overall.non-ascii]
 ### Non-ASCII characters
 
 Source code containing any extended ASCII characters or multi-byte Unicode characters (all characters with code points greater than 127) is considered undefined behavior. Only 7-bit ASCII characters (code points 0-127) are allowed.
 
-r[undefined-behavior.panic]
+r[ub.overall.panic]
 ### Panic
 
 Code that panics is considered undefined behavior. This includes using the `panic!` macro,
 calling functions that panic, or any other situation that causes the program to panic.
 
-r[undefined-behavior.uninitialized]
+r[ub.overall.uninitialized]
 
 ### Uninitialized variables
 
 Using uninitialized variables is considered undefined behavior. This includes reading from a variable that has not been initialized, or using a variable that has been initialized but not assigned a value.
 
-r[undefined-behavior.ownership]
+r[ub.overall.ownership]
 
 ### Ownership violations
 
@@ -37,7 +38,7 @@ To simplify the language, ownership violations are considered undefined behavior
 
 You can simply think that your compiler do not need to handle ownership violations, and it is not required to do so.
 
-r[undefined-behavior.macros]
+r[ub.overall.macros]
 ### Syntactic macros
 
 All syntactic macros are considered undefined behavior. This includes:
@@ -47,12 +48,12 @@ All syntactic macros are considered undefined behavior. This includes:
 - Function-like macros
 - Any macro invocation or definition
 
-r[undefined-behavior.unsafe]
+r[ub.overall.unsafe]
 ### Unsafe operations
 
 All unsafe operations are considered undefined behavior. 
 
-r[undefined-behavior.lifetimes]
+r[ub.overall.lifetimes]
 ### Lifetime-related code
 
 All code that would cause lifetime errors and all lifetime-related syntax are considered undefined behavior.

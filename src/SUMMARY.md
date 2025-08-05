@@ -5,6 +5,11 @@
 - [Notation](notation.md)
 
 - [Undefined behavior](undefined-behavior.md)
+    - [Lexical structure](undefined-behavior/lexical-structure.md)
+    - [Items](undefined-behavior/items.md)
+    - [Statements](undefined-behavior/statements.md)
+    - [Expressions](undefined-behavior/expressions.md)
+    - [Type System](undefined-behavior/type-system.md)
 
 - [Lexical structure](lexical-structure.md)
     - [Input format](input-format.md)
