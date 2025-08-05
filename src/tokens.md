@@ -154,6 +154,7 @@ QUOTE_ESCAPE -> `\'` | `\"`
 ASCII_ESCAPE ->
       `\x` OCT_DIGIT HEX_DIGIT
     | `\n` | `\r` | `\t` | `\\` | `\0`
+```
 
 r[lex.token.literal.char.intro]
 A _character literal_ is a single ASCII character enclosed within two
