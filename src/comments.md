@@ -7,20 +7,26 @@ r[comments.syntax]
       `//` ~LF*
 
 BLOCK_COMMENT ->
-      `/*` (~`*/`)* `*/`
+      `/*` BLOCK_COMMENT_CONTENT* `*/`
+
+BLOCK_COMMENT_CONTENT ->
+      BLOCK_COMMENT
+    | ~[`*` `/`]
+    | `*` ~`/`
+    | `/` ~`*`
 ```
 
 r[comments.normal]
-## Non-doc comments
+## (Non-doc) comments
 
 Comments follow the general C++ style of line (`//`) and
 block (`/* ... */`) comment forms. Nested block comments are supported.
 
 r[comments.normal.tokenization]
-Non-doc comments are interpreted as a form of whitespace.
+(Non-doc) comments are interpreted as a form of whitespace.
 
 r[comments.normal.examples]
-### Non-doc comments examples
+### (Non-doc) comments examples
 
 ```rust
 // This is a valid line comment
@@ -32,14 +38,14 @@ r[comments.normal.examples]
    More content here
 */
 
-//   - Only a comment
-//// - Also only a comment (multiple slashes beyond 3 are regular comments)
+//   - Only a comment  
+//// - Also only a comment (multiple slashes are regular comments)
 
 /*   - Only a comment */
-/*** - Only a comment (multiple asterisks beyond 2 are regular comments) */
+/*** - Only a comment (multiple asterisks are regular comments) */
 
 pub mod nested_comments {
-    /* we can /* nest comments */ */
+    /* we can /* nest /* deeply */ nested */ comments */
     
     // empty line comment
     //
