@@ -5,7 +5,6 @@ r[lex.token.syntax]
 ```grammar,lexer
 Token ->
       IDENTIFIER_OR_KEYWORD
-    | RAW_IDENTIFIER
     | CHAR_LITERAL
     | STRING_LITERAL
     | RAW_STRING_LITERAL
@@ -74,7 +73,7 @@ Literals are tokens used in [literal expressions].
 
 |   | Name |
 |---|------|
-| `\x7F` | 8-bit character code (exactly 2 digits) |
+| `\x7F` | 7-bit character code (exactly 2 digits, up to 0x7F) |
 | `\n` | Newline |
 | `\r` | Carriage return |
 | `\t` | Tab |
@@ -104,7 +103,7 @@ r[lex.token.literal.suffix]
 #### Suffixes
 
 r[lex.token.literal.literal.suffix.intro]
-A suffix is a sequence of characters following the primary part of a literal (without intervening whitespace), of the same form as a non-raw identifier or keyword.
+A suffix is a sequence of characters following the primary part of a literal (without intervening whitespace), of the same form as a identifier or keyword.
 
 r[lex.token.literal.suffix.syntax]
 ```grammar,lexer
@@ -268,7 +267,7 @@ ASCII_FOR_CHAR ->
     <any ASCII (i.e. 0x00 to 0x7F) except `'`, `\`, LF, CR, or TAB>
 
 BYTE_ESCAPE ->
-      `\x` HEX_DIGIT HEX_DIGIT
+      `\x` OCT_DIGIT HEX_DIGIT
     | `\n` | `\r` | `\t` | `\\` | `\0` | `\'` | `\"`
 ```
 
@@ -279,6 +278,9 @@ range) or a single _escape_ preceded by the characters `U+0062` (`b`) and
 `U+0027` is present within the literal, it must be _escaped_ by a preceding
 `U+005C` (`\`) character. It is equivalent to a `u8` unsigned 8-bit integer
 _number literal_.
+
+> [!WARNING]
+> Unlike standard Rust, this specification restricts byte escape sequences to 7-bit ASCII values (0x00-0x7F). The `\x` escape in byte literals cannot represent values above 0x7F, maintaining consistency with the ASCII-only design of this language specification.
 
 r[lex.token.str-byte]
 #### Byte string literals
@@ -300,6 +302,9 @@ the literal, it must be _escaped_ by a preceding `U+005C` (`\`) character.
 Alternatively, a byte string literal can be a _raw byte string literal_, defined
 below.
 
+> [!WARNING]
+> This specification restricts byte escape sequences to 7-bit ASCII values (0x00-0x7F), unlike standard Rust which allows full 8-bit values (0x00-0xFF).
+
 r[lex.token.str-byte.linefeed]
 Line-breaks, represented by the  character `U+000A` (LF), are allowed in byte string literals.
 The character `U+000D` (CR) may not appear in a byte string literal.
@@ -313,7 +318,7 @@ following forms:
 
 r[lex.token.str-byte.escape-byte]
 * A _byte escape_ escape starts with `U+0078` (`x`) and is
-  followed by exactly two _hex digits_. It denotes the byte
+  followed by exactly two _hex digits_ with value up to `0x7F`. It denotes the byte
   equal to the provided hex value.
 
 r[lex.token.str-byte.escape-whitespace]
@@ -417,7 +422,7 @@ starts with a `U+005C` (`\`) and continues with one of the following forms:
 
 r[lex.token.str-c.escape-byte]
 * A _byte escape_ escape starts with `U+0078` (`x`) and is followed by exactly
-  two _hex digits_. It denotes the byte equal to the provided hex value.
+  two _hex digits_ with value up to `0x7F`. It denotes the byte equal to the provided hex value.
 
 r[lex.token.str-c.escape-whitespace]
 * A _whitespace escape_ is one of the characters `U+006E` (`n`), `U+0072`
@@ -614,7 +619,7 @@ r[lex.token.literal.float]
 r[lex.token.literal.float.syntax]
 ```grammar,lexer
 FLOAT_LITERAL ->
-      DEC_LITERAL `.` _not immediately followed by `.`, `_` or an XID_Start character_
+      DEC_LITERAL `.` _not immediately followed by `.`, `_` or an ASCII_ALPHA character_
     | DEC_LITERAL `.` DEC_LITERAL SUFFIX_NO_E?
 ```
 
@@ -666,7 +671,7 @@ r[lex.token.literal.reserved.syntax]
 RESERVED_NUMBER ->
       BIN_LITERAL [`2`-`9`]
     | OCT_LITERAL [`8`-`9`]
-    | ( BIN_LITERAL | OCT_LITERAL | HEX_LITERAL ) `.` _not immediately followed by `.`, `_` or an XID_Start character_
+    | ( BIN_LITERAL | OCT_LITERAL | HEX_LITERAL ) `.` _not immediately followed by `.`, `_` or an ASCII_ALPHA character_
     | `0b` `_`* <end of input or not BIN_DIGIT>
     | `0o` `_`* <end of input or not OCT_DIGIT>
     | `0x` `_`* <end of input or not HEX_DIGIT>
@@ -834,64 +839,7 @@ r[lex.token.reserved.syntax]
 RESERVED_TOKEN ->
       RESERVED_GUARDED_STRING_LITERAL
     | RESERVED_NUMBER
-    | RESERVED_POUNDS
-    | RESERVED_RAW_IDENTIFIER
-    | RESERVED_TOKEN_DOUBLE_QUOTE
-    | RESERVED_TOKEN_POUND
-    | RESERVED_TOKEN_SINGLE_QUOTE
 ```
-
-r[lex.token.reserved-prefix]
-## Reserved prefixes
-
-r[lex.token.reserved-prefix.syntax]
-```grammar,lexer
-RESERVED_TOKEN_DOUBLE_QUOTE ->
-    ( IDENTIFIER_OR_KEYWORD _except `b` or `c` or `r` or `br` or `cr`_ | `_` ) `"`
-
-RESERVED_TOKEN_SINGLE_QUOTE ->
-    ( IDENTIFIER_OR_KEYWORD _except `b`_ | `_` ) `'`
-
-RESERVED_TOKEN_POUND ->
-    ( IDENTIFIER_OR_KEYWORD _except `r` or `br` or `cr`_ | `_` ) `#`
-```
-
-r[lex.token.reserved-prefix.intro]
-Some lexical forms known as _reserved prefixes_ are reserved for future use.
-
-r[lex.token.reserved-prefix.id]
-Source input which would otherwise be lexically interpreted as a non-raw identifier (or a keyword or `_`) which is immediately followed by a `#`, `'`, or `"` character (without intervening whitespace) is identified as a reserved prefix.
-
-r[lex.token.reserved-prefix.raw-token]
-Note that raw identifiers, raw string literals, and raw byte string literals may contain a `#` character but are not interpreted as containing a reserved prefix.
-
-r[lex.token.reserved-prefix.strings]
-Similarly the `r`, `b`, `br`, `c`, and `cr` prefixes used in raw string literals, byte literals, byte string literals, raw byte string literals, C string literals, and raw C string literals are not interpreted as reserved prefixes.
-
-r[lex.token.reserved-prefix.edition2021]
-> [!EDITION-2021]
-> Starting with the 2021 edition, reserved prefixes are reported as an error by the lexer (in particular, they cannot be passed to macros).
->
-> Before the 2021 edition, reserved prefixes are accepted by the lexer and interpreted as multiple tokens (for example, one token for the identifier or keyword, followed by a `#` token).
->
-> Examples accepted in all editions:
-> ```rust
-> macro_rules! lexes {($($_:tt)*) => {}}
-> lexes!{a #foo}
-> lexes!{continue 'foo}
-> lexes!{match "..." {}}
-> lexes!{r#let#foo}         // three tokens: r#let # foo
-> lexes!{'prefix #lt}
-> ```
->
-> Examples accepted before the 2021 edition but rejected later:
-> ```rust,edition2018
-> macro_rules! lexes {($($_:tt)*) => {}}
-> lexes!{a#foo}
-> lexes!{continue'foo}
-> lexes!{match"..." {}}
-> lexes!{'prefix#lt}
-> ```
 
 r[lex.token.reserved-guards]
 ## Reserved guards
@@ -899,8 +847,6 @@ r[lex.token.reserved-guards]
 r[lex.token.reserved-guards.syntax]
 ```grammar,lexer
 RESERVED_GUARDED_STRING_LITERAL -> `#`+ STRING_LITERAL
-
-RESERVED_POUNDS -> `#`{2..}
 ```
 
 r[lex.token.reserved-guards.intro]
@@ -909,12 +855,6 @@ The reserved guards are syntax reserved for future use, and will generate a comp
 r[lex.token.reserved-guards.string-literal]
 The *reserved guarded string literal* is a token of one or more `U+0023` (`#`) immediately followed by a [STRING_LITERAL].
 
-r[lex.token.reserved-guards.pounds]
-The *reserved pounds* is a token of two or more `U+0023` (`#`).
-
-r[lex.token.reserved-guards.edition2024]
-> [!EDITION-2024]
-> Before the 2024 edition, reserved guards are accepted by the lexer and interpreted as multiple tokens. For example, the `#"foo"#` form is interpreted as three tokens. `##` is interpreted as two tokens.
 
 [Inferred types]: types/inferred.md
 [Range patterns]: patterns.md#range-patterns

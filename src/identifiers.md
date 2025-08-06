@@ -10,13 +10,9 @@ ASCII_ALPHA -> [`a`-`z` `A`-`Z`]
 
 ASCII_DIGIT -> [`0`-`9`]
 
-RAW_IDENTIFIER -> `r#` IDENTIFIER_OR_KEYWORD _except `crate`, `self`, `super`, `Self`_
-
 NON_KEYWORD_IDENTIFIER -> IDENTIFIER_OR_KEYWORD _except a [strict][lex.keywords.strict] or [reserved][lex.keywords.reserved] keyword_
 
-IDENTIFIER -> NON_KEYWORD_IDENTIFIER | RAW_IDENTIFIER
-
-RESERVED_RAW_IDENTIFIER -> `r#_`
+IDENTIFIER -> NON_KEYWORD_IDENTIFIER
 ```
 
 <!-- When updating the version, update the UAX links, too. -->
@@ -25,7 +21,6 @@ Identifiers are restricted to ASCII characters only. The first character must be
 
 * `foo`
 * `identifier`
-* `r#true`
 * `myVariable123`
 * `test_case`
 
@@ -63,20 +58,6 @@ r[ident.normalization]
 ## Normalization
 
 Since identifiers are restricted to ASCII characters, no Unicode normalization is required. Identifiers are compared byte-for-byte and are case-sensitive.
-
-r[ident.raw]
-## Raw identifiers
-
-r[ident.raw.intro]
-A raw identifier is like a normal identifier, but prefixed by `r#`. (Note that
-the `r#` prefix is not included as part of the actual identifier.)
-
-r[ident.raw.allowed]
-Unlike a normal identifier, a raw identifier may be any strict or reserved
-keyword except the ones listed above for `RAW_IDENTIFIER`. Raw identifiers must still follow the ASCII character restrictions and 64-character length limit.
-
-r[ident.raw.reserved]
-It is an error to use the [RESERVED_RAW_IDENTIFIER] token `r#_` in order to avoid confusion with the [WildcardPattern].
 
 [`extern crate`]: items/extern-crates.md
 [`no_mangle`]: abi.md#the-no_mangle-attribute
