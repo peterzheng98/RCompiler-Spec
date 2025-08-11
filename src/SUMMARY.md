@@ -5,6 +5,7 @@
 - [Notation](notation.md)
 
 - [Undefined behavior](undefined-behavior.md)
+    - [Builtin](undefined-behavior/builtin.md)
     - [Lexical structure](undefined-behavior/lexical-structure.md)
     - [Items](undefined-behavior/items.md)
     - [Statements](undefined-behavior/statements.md)
