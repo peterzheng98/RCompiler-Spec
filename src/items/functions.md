@@ -280,7 +280,7 @@ r[items.fn.const]
 ## Const functions
 
 r[items.fn.const.intro]
-Functions qualified with the `const` keyword are [const functions], as are [tuple struct] and [tuple variant] constructors. _Const functions_  can be called from within [const contexts].
+Functions qualified with the `const` keyword are [const functions]. In addition, constructors of tuple-like enum variants are also considered const functions and can be called from within [const contexts].
 
 r[items.fn.const.extern]
 Const functions may use the [`extern`] function qualifier.

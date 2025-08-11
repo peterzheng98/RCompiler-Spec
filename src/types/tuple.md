@@ -49,8 +49,7 @@ Furthermore, various expressions will produce the unit value if there is no othe
 r[type.tuple.access]
 Tuple fields can be accessed by either a [tuple index expression] or [pattern matching].
 
-[^1]: Structural types are always equivalent if their internal types are equivalent.
-      For a nominal version of tuples, see [tuple structs].
+[^1]: Structural types are always equivalent if their internal types are equivalent. A nominal form of tuples (tuple structs) is not supported in this specification.
 
 [parenthesized type]: ../types.md#parenthesized-types
 [pattern matching]: ../patterns.md#tuple-patterns

@@ -1,6 +1,9 @@
 r[lifetime-elision]
 # Lifetime elision
 
+> [!NOTE]
+> This reduced specification treats any behavior involving lifetime conflicts (including borrow-check violations, outliving violations, etc.) as undefined behavior (UB). The content of this section is retained from the original Rust language specification and does not need to be implemented at this stage.
+
 Rust has rules that allow lifetimes to be elided in various places where the
 compiler can infer a sensible default choice.
 

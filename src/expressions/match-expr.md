@@ -79,10 +79,10 @@ let message = match x {
 assert_eq!(message, "a few");
 
 // Demonstration of pattern match order.
-struct S(i32, i32);
+struct S { a: i32, b: i32 }
 
-match S(1, 2) {
-    S(z @ 1, _) | S(_, z @ 2) => assert_eq!(z, 1),
+match S { a: 1, b: 2 } {
+    S { a: 1, .. } | S { b: 2, .. } => (),
     _ => panic!(),
 }
 ```

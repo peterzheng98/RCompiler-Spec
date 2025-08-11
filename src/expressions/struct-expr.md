@@ -13,7 +13,7 @@ StructExprField ->
     OuterAttribute*
     (
         IDENTIFIER
-      | (IDENTIFIER | TUPLE_INDEX) `:` Expression
+      | IDENTIFIER `:` Expression
     )
 
 StructBase -> `..` Expression
@@ -37,36 +37,7 @@ Enum::Variant {};
 ```
 
 > [!NOTE]
-> Tuple structs and tuple enum variants are typically instantiated using a [call expression][expr.call] referring to the [constructor in the value namespace][items.struct.tuple]. These are distinct from a struct expression using curly braces referring to the constructor in the type namespace.
->
-> ```rust
-> struct Position(i32, i32, i32);
-> Position(0, 0, 0);  // Typical way of creating a tuple struct.
-> let c = Position;  // `c` is a function that takes 3 arguments.
-> let pos = c(8, 6, 7);  // Creates a `Position` value.
->
-> enum Version { Triple(i32, i32, i32) };
-> Version::Triple(0, 0, 0);
-> let f = Version::Triple;
-> let ver = f(8, 6, 7);
-> ```
->
-> The last segment of the call path cannot refer to a type alias:
->
-> ```rust
-> trait Tr { type T; }
-> impl<T> Tr for T { type T = T; }
->
-> struct Tuple();
-> enum Enum { Tuple() }
->
-> // <Unit as Tr>::T(); // causes an error -- `::T` is a type, not a value
-> <Enum as Tr>::T::Tuple(); // OK
-> ```
->
-> ----
->
-> Unit structs and unit enum variants are typically instantiated using a [path expression][expr.path] referring to the [constant in the value namespace][items.struct.unit].
+> Tuple structs are not supported in this specification. For tuple-like enum variants, use a [call expression][expr.call] that refers to their constructor in the value namespace; this is distinct from a struct expression with curly braces that refers to the constructor in the type namespace. Unit structs and unit enum variants are typically instantiated using a [path expression][expr.path] that refers to the constant in the value namespace.
 >
 > ```rust
 > struct Gamma;
@@ -119,15 +90,8 @@ Struct expressions can't be used directly in a [loop] or [if] expression's head,
 However, struct expressions can be used in these situations if they are within another expression, for example inside [parentheses].
 
 r[expr.struct.tuple-field]
-The field names can be decimal integer values to specify indices for constructing tuple structs.
-This can be used with base structs to fill out the remaining indices not specified:
-
-```rust
-struct Color(u8, u8, u8);
-let c1 = Color(0, 0, 0);  // Typical way of creating a tuple struct.
-let c2 = Color{0: 255, 1: 127, 2: 0};  // Specifying fields by index.
-let c3 = Color{1: 0, ..c2};  // Fill out all other fields using a base struct.
-```
+> [!NOTE]
+> Numeric field names (e.g., `0:`, `1:`) for struct construction are not allowed because tuple structs are not part of this specification.
 
 r[expr.struct.field.named]
 ### Struct field init shorthand

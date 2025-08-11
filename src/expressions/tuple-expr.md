@@ -50,7 +50,7 @@ TupleIndexingExpression -> Expression `.` TUPLE_INDEX
 ```
 
 r[expr.tuple-index.intro]
-A *tuple indexing expression* accesses fields of [tuples][tuple type] and [tuple structs][tuple struct].
+A *tuple indexing expression* accesses fields of [tuples][tuple type].
 
 The syntax for a tuple index expression is an expression, called the *tuple operand*, then a `.`, then finally a tuple index.
 
@@ -59,7 +59,7 @@ The syntax for the *tuple index* is a [decimal literal] with no leading zeros, u
 For example `0` and `2` are valid tuple indices but not `01`, `0_`, nor `0i32`.
 
 r[expr.tuple-index.required-type]
-The type of the tuple operand must be a [tuple type] or a [tuple struct].
+The type of the tuple operand must be a [tuple type].
 
 r[expr.tuple-index.index-name-operand]
 The tuple index must be a name of a field of the type of the tuple operand.
@@ -75,11 +75,7 @@ Examples of tuple indexing expressions:
 let pair = ("a string", 2);
 assert_eq!(pair.1, 2);
 
-// Indexing a tuple struct
-# struct Point(f32, f32);
-let point = Point(1.0, 0.0);
-assert_eq!(point.0, 1.0);
-assert_eq!(point.1, 0.0);
+
 ```
 
 > [!NOTE]

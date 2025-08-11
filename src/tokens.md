@@ -592,8 +592,7 @@ TUPLE_INDEX -> INTEGER_LITERAL
 ```
 
 r[lex.token.literal.int.tuple-field.intro]
-A tuple index is used to refer to the fields of [tuples], [tuple structs], and
-[tuple variants].
+A tuple index is used to refer to the fields of [tuples] and [tuple variants].
 
 r[lex.token.literal.int.tuple-field.eq]
 Tuple indices are compared with the literal token directly. Tuple indices

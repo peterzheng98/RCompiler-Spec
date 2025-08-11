@@ -23,17 +23,7 @@ let p: Point = (41, 68);
 ```
 
 r[items.type.constructor-alias]
-A type alias to a tuple-struct or unit-struct cannot be used to qualify that type's constructor:
-
-```rust,compile_fail
-struct MyStruct(u32);
-
-use MyStruct as UseAlias;
-type TypeAlias = MyStruct;
-
-let _ = UseAlias(5); // OK
-let _ = TypeAlias(5); // Doesn't work
-```
+Tuple structs are not supported in this specification. For unit structs, a type alias cannot be used to qualify the type's constructor; construction must use the unit struct's own identifier directly.
 
 r[items.type.associated-type]
 A type alias, when not used as an [associated type], must include a [Type][grammar-Type] and

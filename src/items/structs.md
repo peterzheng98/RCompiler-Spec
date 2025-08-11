@@ -5,21 +5,13 @@ r[items.struct.syntax]
 ```grammar,items
 Struct ->
       StructStruct
-    | TupleStruct
 
 StructStruct ->
     `struct` IDENTIFIER GenericParams? WhereClause? ( `{` StructFields? `}` | `;` )
 
-TupleStruct ->
-    `struct` IDENTIFIER GenericParams? `(` TupleFields? `)` WhereClause? `;`
-
 StructFields -> StructField (`,` StructField)* `,`?
 
 StructField -> OuterAttribute* Visibility? IDENTIFIER `:` Type
-
-TupleFields -> TupleField (`,` TupleField)* `,`?
-
-TupleField -> OuterAttribute* Visibility? Type
 ```
 
 r[items.struct.intro]
@@ -36,17 +28,8 @@ let p = Point {x: 10, y: 11};
 let px: i32 = p.x;
 ```
 
-r[items.struct.tuple]
-A _tuple struct_ is a nominal [tuple type], and is also defined with the keyword `struct`.
-In addition to defining a type, it also defines a constructor of the same name in the [value namespace].
-The constructor is a function which can be called to create a new instance of the struct.
-For example:
-
-```rust
-struct Point(i32, i32);
-let p = Point(10, 11);
-let px: i32 = match p { Point(x, _) => x };
-```
+> [!NOTE]
+> Tuple structs are not supported in this specification. Use named-field structs instead, or tuple-like enum variants if positional fields are desired.
 
 r[items.struct.unit]
 A _unit-like struct_ is a struct without any fields, defined by leaving off the

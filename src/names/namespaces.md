@@ -57,9 +57,8 @@ The following is a list of namespaces, with their corresponding entities:
 An example of how overlapping names in different namespaces can be used unambiguously:
 
 ```rust
-// Foo introduces a type in the type namespace and a constructor in the value
-// namespace.
-struct Foo(u32);
+// In this specification, only named-field structs are supported; tuple structs are not.
+struct Foo { x: u32 }
 
 // The `Foo` macro is declared in the macro namespace.
 macro_rules! Foo {
@@ -70,7 +69,6 @@ macro_rules! Foo {
 // `'Foo` introduces a new lifetime in the lifetime namespace.
 fn example<'Foo>(f: Foo) {
     // `Foo` refers to the `Foo` constructor in the value namespace.
-    let ctor = Foo;
     // `Foo` refers to the `Foo` macro in the macro namespace.
     Foo!{}
     // `'Foo` introduces a label in the label namespace.
