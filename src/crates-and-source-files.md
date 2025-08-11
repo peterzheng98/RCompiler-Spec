@@ -66,26 +66,35 @@ A crate that contains a `main` [function] can be compiled to an executable.
 r[crate.main.restriction]
 If a `main` function is present, it must take no arguments, must not declare any
 [trait or lifetime bounds], must not have any [where clauses], and its return
-type must implement the [`Termination`] trait.
+type must be the unit type `()`.
+
+r[crate.main.format]
+The `main` function must have the following format:
 
 ```rust
-fn main() {}
-```
-```rust
-fn main() -> ! {
-    _exit(0);
+fn main() -> () {
+    // ... function body ...
+    exit(code);
 }
 ```
 
-For return value of main function, you can assume that the function has the following signature:
+r[crate.main.exit-requirement]
+The `main` function must end with a call to the builtin `exit` function as its final statement. The `exit` function is provided by the compiler and terminates the process with the specified exit code. Using `exit` anywhere other than the final statement of `main` is a semantic error.
+
+r[crate.main.example]
+Example of a valid `main` function:
+
 ```rust
-// SAFETY: The function declarations given below are in
-// line with the header files of `my_c_library`.
-#[link(name = "my_c_library")]
-unsafe extern "C" {
-    fn _exit(x: i32); // no return function
+fn main() -> () {
+    println("Hello, world!");
+    let result = 42;
+    printlnInt(result);
+    exit(0);
 }
 ```
+
+> [!NOTE]
+> This specification differs from standard Rust, where `main` functions can have various return types (including `()`, `!`, or types implementing `Termination`) and do not require an explicit `exit` call. In this simplified language, all `main` functions must explicitly terminate with `exit(code)`.
 
 
 [Unicode alphanumeric]: char::is_alphanumeric
