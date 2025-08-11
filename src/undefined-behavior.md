@@ -60,3 +60,7 @@ All code that would cause lifetime errors and all lifetime-related syntax are co
 
 And the compiler is not required to perform any lifetime analysis or checking.
 
+r[ub.overall.genericity]
+### Genericity
+
+All code that relies on genericity is considered undefined behavior except `Box<T>`, `Option<T>` and `Result<T>`.
