@@ -10,14 +10,15 @@ EnumVariants -> EnumVariant ( `,` EnumVariant )* `,`?
 
 EnumVariant ->
     OuterAttribute* Visibility?
-    IDENTIFIER ( EnumVariantTuple | EnumVariantStruct )? EnumVariantDiscriminant?
-
-EnumVariantTuple -> `(` TupleFields? `)`
+    IDENTIFIER ( EnumVariantStruct )? EnumVariantDiscriminant?
 
 EnumVariantStruct -> `{` StructFields? `}`
 
 EnumVariantDiscriminant -> `=` Expression
 ```
+
+r[items.enum.syntax.note]
+> NOTE: Compared to Rust, this specification removes `EnumVariantTuple` (tuple-like enum variants are not supported). Only struct-like and unit-like variants are supported.
 
 r[items.enum.intro]
 An *enumeration*, also referred to as an *enum*, is a simultaneous definition of a
@@ -43,20 +44,17 @@ a = Animal::Cat;
 ```
 
 r[items.enum.constructor]
-Enum constructors can have either named or unnamed fields:
+Enum constructors can have named fields or be unit-like:
 
 ```rust
 enum Animal {
-    Dog(String, f64),
-    Cat { name: String, weight: f64 },
+    Dog { name: String, weight: f64 },
+    Cat,
 }
 
-let mut a: Animal = Animal::Dog("Cocoa".to_string(), 37.2);
-a = Animal::Cat { name: "Spotty".to_string(), weight: 2.7 };
+let mut a: Animal = Animal::Cat;
+a = Animal::Dog { name: "Spotty".to_string(), weight: 2.7 };
 ```
-
-In this example, `Cat` is a _struct-like enum variant_, whereas `Dog` is simply
-called an enum variant.
 
 r[items.enum.fieldless]
 An enum where no constructors contain fields are called a
@@ -64,7 +62,6 @@ An enum where no constructors contain fields are called a
 
 ```rust
 enum Fieldless {
-    Tuple(),
     Struct{},
     Unit,
 }
@@ -87,13 +84,10 @@ Variant constructors are similar to [struct] definitions, and can be referenced 
 
 r[items.enum.constructor-namespace]
 Each variant defines its type in the [type namespace], though that type cannot be used as a type specifier.
-Tuple-like and unit-like variants also define a constructor in the [value namespace].
+Unit-like variants also define a constructor in the [value namespace].
 
 r[items.enum.struct-expr]
 A struct-like variant can be instantiated with a [struct expression].
-
-r[items.enum.tuple-expr]
-A tuple-like variant can be instantiated with a [call expression] or a [struct expression].
 
 r[items.enum.path-expr]
 A unit-like variant can be instantiated with a [path expression] or a [struct expression].
@@ -102,15 +96,12 @@ For example:
 ```rust
 enum Examples {
     UnitLike,
-    TupleLike(i32),
     StructLike { value: i32 },
 }
 
 use Examples::*; // Creates aliases to all variants.
 let x = UnitLike; // Path expression of the const item.
 let x = UnitLike {}; // Struct expression.
-let y = TupleLike(123); // Call expression.
-let y = TupleLike { 0: 123 }; // Struct expression using integer field names.
 let z = StructLike { value: 123 }; // Struct expression.
 ```
 
@@ -146,7 +137,6 @@ r[items.enum.discriminant.explicit.primitive-repr]
    #[repr(u8)]
    enum Enum {
        Unit = 3,
-       Tuple(u16),
        Struct {
            a: u8,
            b: u16,
@@ -225,7 +215,7 @@ r[items.enum.discriminant.coercion]
 #### Casting
 
 r[items.enum.discriminant.coercion.intro]
-If an enumeration is [unit-only] (with no tuple and struct variants), then its
+If an enumeration is [unit-only], then its
 discriminant can be directly accessed with a [numeric cast]; e.g.:
 
 ```rust
@@ -245,26 +235,22 @@ r[items.enum.discriminant.coercion.fieldless]
 
 ```rust
 enum Fieldless {
-    Tuple(),
     Struct{},
     Unit,
 }
 
-assert_eq!(0, Fieldless::Tuple() as isize);
-assert_eq!(1, Fieldless::Struct{} as isize);
-assert_eq!(2, Fieldless::Unit as isize);
+assert_eq!(0, Fieldless::Struct{} as isize);
+assert_eq!(1, Fieldless::Unit as isize);
 
 #[repr(u8)]
 enum FieldlessWithDiscriminants {
     First = 10,
-    Tuple(),
     Second = 20,
     Struct{},
     Unit,
 }
 
 assert_eq!(10, FieldlessWithDiscriminants::First as u8);
-assert_eq!(11, FieldlessWithDiscriminants::Tuple() as u8);
 assert_eq!(20, FieldlessWithDiscriminants::Second as u8);
 assert_eq!(21, FieldlessWithDiscriminants::Struct{} as u8);
 assert_eq!(22, FieldlessWithDiscriminants::Unit as u8);
@@ -281,7 +267,6 @@ discriminant may be reliably accessed via unsafe pointer casting:
 #[repr(u8)]
 enum Enum {
     Unit,
-    Tuple(bool),
     Struct{a: bool},
 }
 
@@ -292,12 +277,10 @@ impl Enum {
 }
 
 let unit_like = Enum::Unit;
-let tuple_like = Enum::Tuple(true);
 let struct_like = Enum::Struct{a: false};
 
 assert_eq!(0, unit_like.discriminant());
-assert_eq!(1, tuple_like.discriminant());
-assert_eq!(2, struct_like.discriminant());
+assert_eq!(1, struct_like.discriminant());
 ```
 
 r[items.enum.empty]
@@ -333,9 +316,6 @@ macro_rules! mac_variant {
     ($vis:vis $name:ident) => {
         enum $name {
             $vis Unit,
-
-            $vis Tuple(u8, u16),
-
             $vis Struct { f: u8 },
         }
     }
@@ -348,7 +328,6 @@ mac_variant! { E }
 #[cfg(false)]
 enum E {
     pub U,
-    pub(crate) T(u8),
     pub(super) T { f: String }
 }
 ```

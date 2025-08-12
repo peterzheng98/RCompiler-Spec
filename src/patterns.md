@@ -16,13 +16,15 @@ PatternWithoutRange ->
     | RestPattern
     | ReferencePattern
     | StructPattern
-    | TupleStructPattern
     | TuplePattern
     | GroupedPattern
     | SlicePattern
     | PathPattern
     | MacroInvocation
 ```
+
+r[patterns.syntax.note]
+> NOTE: Compared to Rust, this specification removes `TupleStructPattern` (tuple struct patterns are not supported). Tuple types themselves and their tuple patterns are still supported.
 
 r[patterns.intro]
 Patterns are used to match values against structures and to, optionally, bind variables to values inside these structures.
@@ -407,7 +409,7 @@ r[patterns.rest.intro]
 The _rest pattern_ (the `..` token) acts as a variable-length pattern which matches zero or more elements that haven't been matched already before and after.
 
 r[patterns.rest.allowed-patterns]
-It may only be used in [tuple](#tuple-patterns), [tuple struct](#tuple-struct-patterns), and [slice](#slice-patterns) patterns, and may only appear once as one of the elements in those patterns.
+It may only be used in [tuple](#tuple-patterns) and [slice](#slice-patterns) patterns, and may only appear once as one of the elements in those patterns.
 It is also allowed in an [identifier pattern](#identifier-patterns) for [slice patterns](#slice-patterns) only.
 
 r[patterns.rest.refutable]
@@ -445,7 +447,7 @@ if let [.., penultimate, _] = slice {
 }
 
 # let tuple = (1, 2, 3, 4, 5);
-// Rest patterns may also be used in tuple and tuple struct patterns.
+// Rest patterns may also be used in tuple patterns.
 match tuple {
     (1, .., y, z) => println!("y={} z={}", y, z),
     (.., 5) => println!("tail must be 5"),
@@ -706,8 +708,7 @@ StructPatternFields ->
 StructPatternField ->
     OuterAttribute*
     (
-        TUPLE_INDEX `:` Pattern
-      | IDENTIFIER `:` Pattern
+        IDENTIFIER `:` Pattern
       | `ref`? `mut`? IDENTIFIER
     )
 
@@ -719,7 +720,7 @@ Struct patterns match struct, enum, and union values that match all criteria def
 They are also used to [destructure](#destructuring) a struct, enum, or union value.
 
 r[patterns.struct.ignore-rest]
-On a struct pattern, the fields are referenced by name, index (in the case of tuple structs) or ignored by use of `..`:
+On a struct pattern, the fields are referenced by name or ignored by use of `..`:
 
 ```rust
 # struct Point {
@@ -733,19 +734,6 @@ match s {
     Point {y: 10, x: 20} => (),    // order doesn't matter
     Point {x: 10, ..} => (),
     Point {..} => (),
-}
-
-# struct PointTuple (
-#     u32,
-#     u32,
-# );
-# let t = PointTuple(1, 2);
-#
-match t {
-    PointTuple {0: 10, 1: 20} => (),
-    PointTuple {1: 10, 0: 20} => (),   // order doesn't matter
-    PointTuple {0: 10, ..} => (),
-    PointTuple {..} => (),
 }
 
 # enum Message {
@@ -802,64 +790,9 @@ r[patterns.struct.refutable]
 A struct pattern is refutable if the [PathInExpression] resolves to a constructor of an enum with more than one variant, or one of its subpatterns is refutable.
 
 r[patterns.struct.namespace]
-A struct pattern matches against the struct, union, or enum variant whose constructor is resolved from [PathInExpression] in the [type namespace]. See [patterns.tuple-struct.namespace] for more details.
+A struct pattern matches against the struct, union, or enum variant whose constructor is resolved from [PathInExpression] in the [type namespace].
 
-r[patterns.tuple-struct]
-## Tuple struct patterns
-
-r[patterns.tuple-struct.syntax]
-```grammar,patterns
-TupleStructPattern -> PathInExpression `(` TupleStructItems? `)`
-
-TupleStructItems -> Pattern ( `,` Pattern )* `,`?
-```
-
-r[patterns.tuple-struct.intro]
-Tuple struct patterns match tuple struct and enum values that match all criteria defined by its subpatterns.
-They are also used to [destructure](#destructuring) a tuple struct or enum value.
-
-r[patterns.tuple-struct.refutable]
-A tuple struct pattern is refutable if the [PathInExpression] resolves to a constructor of an enum with more than one variant, or one of its subpatterns is refutable.
-
-r[patterns.tuple-struct.namespace]
-A tuple struct pattern matches against the tuple struct or [tuple-like enum variant] whose constructor is resolved from [PathInExpression] in the [value namespace].
-
-> [!NOTE]
-> Conversely, a struct pattern for a tuple struct or [tuple-like enum variant], e.g. `S { 0: _ }`, matches against the tuple struct or variant whose constructor is resolved in the [type namespace].
->
-> ```rust,no_run
-> enum E1 { V(u16) }
-> enum E2 { V(u32) }
->
-> // Import `E1::V` from the type namespace only.
-> mod _0 {
->     const V: () = (); // For namespace masking.
->     pub(super) use super::E1::*;
-> }
-> use _0::*;
->
-> // Import `E2::V` from the value namespace only.
-> mod _1 {
->     struct V {} // For namespace masking.
->     pub(super) use super::E2::*;
-> }
-> use _1::*;
->
-> fn f() {
->     // This struct pattern matches against the tuple-like
->     // enum variant whose constructor was found in the type
->     // namespace.
->     let V { 0: ..=u16::MAX } = (loop {}) else { loop {} };
->     // This tuple struct pattern matches against the tuple-like
->     // enum variant whose constructor was found in the value
->     // namespace.
->     let V(..=u32::MAX) = (loop {}) else { loop {} };
-> }
-> # // Required due to the odd behavior of `super` within functions.
-> # fn main() {}
-> ```
->
-> The Lang team has made certain decisions, such as in [PR #138458], that raise questions about the desirability of using the value namespace in this way for patterns, as described in [PR #140593]. It might be prudent to not intentionally rely on this nuance in your code.
+<!-- Tuple struct patterns are not supported in this specification. -->
 
 r[patterns.tuple]
 ## Tuple patterns
@@ -1057,8 +990,8 @@ r[patterns.constraints.exhaustiveness-or-pattern]
    For some constructor `c(x, ..)` the distributive law applies such that `c(p | q, ..rest)` covers the same set of value as `c(p, ..rest) | c(q, ..rest)` does.
    This can be applied recursively until there are no more nested patterns of form `p | q` other than those that exist at the top level.
 
-   Note that by *"constructor"* we do not refer to tuple struct patterns, but rather we refer to a pattern for any product type.
-   This includes enum variants, tuple structs, structs with named fields, arrays, tuples, and slices.
+   Note that by *"constructor"* we refer to a pattern for any product type.
+   This includes enum variants, structs with named fields, arrays, tuples, and slices.
 
 r[patterns.behavior]
 ### Dynamic semantics
