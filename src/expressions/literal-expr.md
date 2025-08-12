@@ -7,13 +7,9 @@ LiteralExpression ->
       CHAR_LITERAL
     | STRING_LITERAL
     | RAW_STRING_LITERAL
-    | BYTE_LITERAL
-    | BYTE_STRING_LITERAL
-    | RAW_BYTE_STRING_LITERAL
     | C_STRING_LITERAL
     | RAW_C_STRING_LITERAL
     | INTEGER_LITERAL
-    | FLOAT_LITERAL
     | `true`
     | `false`
 ```
@@ -435,58 +431,6 @@ r[expr.literal.int.cast]
 
 > [!NOTE]
 > `-1i8`, for example, is an application of the [negation operator] to the literal expression `1i8`, not a single integer literal expression. See [Overflow] for notes on representing the most negative value for a signed type.
-
-r[expr.literal.float]
-## Floating-point literal expressions
-
-r[expr.literal.float.intro]
-A floating-point literal expression has one of two forms:
- * a single [FLOAT_LITERAL] token
- * a single [INTEGER_LITERAL] token which has a suffix and no radix indicator
-
-r[expr.literal.float.suffix]
-If the token has a [suffix], the suffix must be the name of one of the [primitive floating-point types][floating-point types]: `f32` or `f64`, and the expression has that type.
-
-r[expr.literal.float.infer]
-If the token has no suffix, the expression's type is determined by type inference:
-
-r[expr.literal.float.inference-unique-type]
-* If a floating-point type can be _uniquely_ determined from the surrounding program context, the expression has that type.
-
-r[expr.literal.float.inference-default]
-* If the program context under-constrains the type, it defaults to `f64`.
-
-r[expr.literal.float.inference-error]
-* If the program context over-constrains the type, it is considered a static type error.
-
-Examples of floating-point literal expressions:
-
-```rust
-123.0f64;        // type f64
-0.1f64;          // type f64
-0.1f32;          // type f32
-12E+99_f64;      // type f64
-5f32;            // type f32
-let x: f64 = 2.; // type f64
-```
-
-r[expr.literal.float.result]
-The value of the expression is determined from the string representation of the token as follows:
-
-r[expr.literal.float.type-suffix-stripped]
-* Any suffix is removed from the string.
-
-r[expr.literal.float.separators-stripped]
-* Any underscores are removed from the string.
-
-r[expr.literal.float.value]
-* The string is converted to the expression's type as if by [`f32::from_str`] or [`f64::from_str`].
-
-> [!NOTE]
-> `-1.0`, for example, is an application of the [negation operator] to the literal expression `1.0`, not a single floating-point literal expression.
-
-> [!NOTE]
-> `inf` and `NaN` are not literal tokens. The [`f32::INFINITY`], [`f64::INFINITY`], [`f32::NAN`], and [`f64::NAN`] constants can be used instead of literal expressions. In `rustc`, a literal large enough to be evaluated as infinite will trigger the `overflowing_literals` lint check.
 
 r[expr.literal.bool]
 ## Boolean literal expressions

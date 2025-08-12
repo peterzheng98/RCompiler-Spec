@@ -26,23 +26,7 @@ cargo install --locked mdbook
 
 ## Building
 
-To build the Reference, first clone the project:
-
-```sh
-git clone https://github.com/rust-lang/reference.git
-```
-
-(Alternatively, if you don't want to use `git`, [download][] a ZIP file
-of the project, extract it using your preferred tool, and rename the
-top-level directory to `reference`.)
-
-[download]: https://github.com/rust-lang/reference/archive/refs/heads/master.zip
-
-Now change your current directory to the working directory:
-
-```sh
-cd reference
-```
+To build the Reference, first clone this project. Then change to the project directory.
 
 To test all of the code examples in the Reference, run:
 
