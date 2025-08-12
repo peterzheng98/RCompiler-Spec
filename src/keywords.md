@@ -3,9 +3,8 @@ r[lex.keywords]
 
 Rust divides keywords into three categories:
 
-* [strict](#strict-keywords)
-* [reserved](#reserved-keywords)
-* [weak](#weak-keywords)
+- [Keywords](#keywords)
+  - [Strict keywords](#strict-keywords)
 
 r[lex.keywords.strict]
 ## Strict keywords
@@ -19,8 +18,6 @@ be used as the names of:
 * Fields and [variants]
 * [Type parameters]
 * Lifetime parameters or [loop labels]
-* [Macros] or [attributes]
-* [Macro placeholders]
 * [Crates]
 
 r[lex.keywords.strict.list]
@@ -33,7 +30,6 @@ The following keywords are in all editions:
 - `crate`
 - `else`
 - `enum`
-- `extern`
 - `false`
 - `fn`
 - `for`
@@ -46,7 +42,7 @@ The following keywords are in all editions:
 - `mod`
 - `move`
 - `mut`
-- `pub`
+- `pub`, you do not need to implement this
 - `ref`
 - `return`
 - `self`
@@ -63,12 +59,10 @@ The following keywords are in all editions:
 - `while`
 
 r[lex.keywords.strict.edition2018]
-The following keywords were added beginning in the 2018 edition.
+The following keyword was added beginning in the 2018 edition.
 
-- `async`
-- `await`
 - `dyn`
-
+<!-- 
 r[lex.keywords.reserved]
 ## Reserved keywords
 
@@ -100,48 +94,7 @@ The following keywords are reserved beginning in the 2018 edition.
 r[lex.keywords.reserved.edition2024]
 The following keywords are reserved beginning in the 2024 edition.
 
-- `gen`
-
-r[lex.keywords.weak]
-## Weak keywords
-
-r[lex.keywords.weak.intro]
-These keywords have special meaning only in certain contexts. For example, it
-is possible to declare a variable or method with the name `union`.
-
-- `'static`
-- `macro_rules`
-- `raw`
-- `safe`
-- `union`
-
-r[lex.keywords.weak.macro_rules]
-* `macro_rules` is used to create custom [macros].
-
-r[lex.keywords.weak.union]
-* `union` is used to declare a [union] and is only a keyword when used in a
-  union declaration.
-
-r[lex.keywords.weak.lifetime-static]
-* `'static` is used for the static lifetime and cannot be used as a [generic
-  lifetime parameter] or [loop label]
-
-  ```compile_fail
-  // error[E0262]: invalid lifetime parameter name: `'static`
-  fn invalid_lifetime_parameter<'static>(s: &'static str) -> &'static str { s }
-  ```
-
-r[lex.keywords.weak.safe]
-* `safe` is used for functions and statics, which has meaning in [external blocks].
-
-r[lex.keywords.weak.raw]
-* `raw` is used for [raw borrow operators], and is only a keyword when matching a raw borrow operator form (such as `&raw const expr` or `&raw mut expr`).
-
-r[lex.keywords.weak.dyn.edition2018]
-> [!EDITION-2018]
-> In the 2015 edition, [`dyn`] is a keyword when used in a type position followed by a path that does not start with `::` or `<`, a lifetime, a question mark, a `for` keyword or an opening parenthesis.
->
-> Beginning in the 2018 edition, `dyn` has been promoted to a strict keyword.
+- `gen` -->
 
 [items]: items.md
 [Variables]: variables.md
