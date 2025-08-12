@@ -5,8 +5,10 @@ r[type.trait-object.syntax]
 ```grammar,types
 TraitObjectType -> `dyn`? TypeParamBounds
 
-TraitObjectTypeOneBound -> `dyn`? TraitBound
+TraitObjectTypeOneBound -> `dyn` TraitBound
 ```
+
+> NOTE: Syntax update: `TraitObjectTypeOneBound` now requires explicit use of `dyn`; the optional form has been removed to eliminate legacy Rust compatibility.
 
 r[type.trait-object.intro]
 A *trait object* is an opaque value of another type that implements a set of
