@@ -12,7 +12,6 @@ Token ->
     | RAW_C_STRING_LITERAL
     | INTEGER_LITERAL
     | PUNCTUATION
-    | RESERVED_TOKEN
 ```
 
 r[lex.token.intro]
@@ -93,7 +92,7 @@ SUFFIX -> IDENTIFIER_OR_KEYWORD
 SUFFIX_NO_E -> SUFFIX _not beginning with `e` or `E`_
 ```
 
-r[lex.token.literal.suffix.validity]
+<!-- r[lex.token.literal.suffix.validity]
 Any kind of literal (string, integer, etc) with any suffix is valid as a token.
 
 A literal token with any suffix can be passed to a macro without producing an error.
@@ -106,16 +105,16 @@ macro_rules! blackhole_lit { ($l:literal) => () }
 
 blackhole!("string"suffix); // OK
 blackhole_lit!(1suffix); // OK
-```
+``` -->
 
 r[lex.token.literal.suffix.parse]
-However, suffixes on literal tokens which are interpreted as literal expressions or patterns are restricted.
+Suffixes on literal tokens which are interpreted as literal expressions or patterns are restricted.
 Any suffixes are rejected on non-numeric literal tokens,
 and numeric literal tokens are accepted only with suffixes from the list below.
 
-| Integer | Floating-point |
-|---------|----------------|
-| `u8`, `i8`, `u16`, `i16`, `u32`, `i32`, `u64`, `i64`, `u128`, `i128`, `usize`, `isize` | `f32`, `f64` |
+| Integer |
+|---------|
+| `u32`, `i32`, `usize`, `isize` | 
 
 ### Character and string literals
 
@@ -557,8 +556,9 @@ r[lex.token.delim]
 ## Delimiters
 
 Bracket punctuation is used in various parts of the grammar. An open bracket
-must always be paired with a close bracket. Brackets and the tokens within
-them are referred to as "token trees" in [macros].  The three types of brackets are:
+must always be paired with a close bracket. 
+<!-- Brackets and the tokens within them are referred to as "token trees" in [macros].  -->
+The three types of brackets are:
 
 | Bracket | Type            |
 |---------|-----------------|
