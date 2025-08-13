@@ -7,7 +7,6 @@ Implementation -> InherentImpl | TraitImpl
 
 InherentImpl ->
     `impl` GenericParams? Type WhereClause? `{`
-        InnerAttribute*
         AssociatedItem*
     `}`
 
@@ -15,7 +14,6 @@ TraitImpl ->
     `unsafe`? `impl` GenericParams? `!`? TypePath `for` Type
     WhereClause?
     `{`
-        InnerAttribute*
         AssociatedItem*
     `}`
 ```

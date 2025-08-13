@@ -542,7 +542,6 @@ See [Integer literal expressions] for the effect of these suffixes.
 Examples of integer literals which are accepted as literal expressions:
 
 ```rust
-# #![allow(overflowing_literals)]
 123;
 123i32;
 123u32;
