@@ -94,7 +94,9 @@ r[expr.array.index.zero-index]
 Indices are zero-based for arrays and slices.
 
 r[expr.array.index.const]
-Array access is a [constant expression], so bounds can be checked at compile-time with a constant index value.
+If an array access is a [constant expression], bounds can be checked at compile-time with a constant index value.
+
+r[expr.array.index.non-const]
 Otherwise a check will be performed at run-time that will put the thread in a [_panicked state_][panic] if it fails.
 
 ```rust,should_panic

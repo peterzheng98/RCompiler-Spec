@@ -15,14 +15,11 @@ LetChain -> LetChainCondition ( `&&` LetChainCondition )*
 
 LetChainCondition ->
       Expression _except [ExcludedConditions]_
-    | OuterAttribute* `let` Pattern `=` Scrutinee _except [ExcludedConditions]_
+    | `let` Pattern `=` Expression _except [ExcludedConditions]_
 
 @root ExcludedConditions ->
       StructExpression
     | LazyBooleanExpression
-    | RangeExpr
-    | RangeFromExpr
-    | RangeInclusiveExpr
     | AssignmentExpression
     | CompoundAssignmentExpression
 ```

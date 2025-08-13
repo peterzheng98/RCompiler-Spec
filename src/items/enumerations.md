@@ -8,12 +8,7 @@ Enumeration ->
 
 EnumVariants -> EnumVariant ( `,` EnumVariant )* `,`?
 
-EnumVariant ->
-    IDENTIFIER ( EnumVariantTuple | EnumVariantStruct )? EnumVariantDiscriminant?
-
-EnumVariantTuple -> `(` TupleFields? `)`
-
-EnumVariantStruct -> `{` StructFields? `}`
+EnumVariant -> IDENTIFIER EnumVariantDiscriminant?
 
 EnumVariantDiscriminant -> `=` Expression
 ```

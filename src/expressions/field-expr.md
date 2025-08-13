@@ -49,6 +49,8 @@ r[expr.field.autoref-deref]
 If the type of the container operand implements [`Deref`] or [`DerefMut`][`Deref`] depending on whether the operand is [mutable], it is *automatically dereferenced* as many times as necessary to make the field access possible.
 This process is also called *autoderef* for short.
 
+In RCompiler, only the [`Box`] type is supported for automatic dereferencing.
+
 r[expr.field.borrow]
 ## Borrowing
 
@@ -68,6 +70,7 @@ let a: &mut String = &mut x.f1; // x.f1 borrowed mutably
 let b: &String = &x.f2;         // x.f2 borrowed immutably
 let c: &String = &x.f2;         // Can borrow again
 let d: String = x.f3;           // Move out of x.f3
+let e: String = x.f3;           // Error: use of moved value
 ```
 
 [`Box`]: ../special-types-and-traits.md#boxt

@@ -209,97 +209,6 @@ r##"foo #"# bar"##;                // foo #"# bar
 "\\x52"; r"\x52";                  // \x52
 ```
 
-r[expr.literal.byte-char]
-## Byte literal expressions
-
-r[expr.literal.byte-char.intro]
-A byte literal expression consists of a single [BYTE_LITERAL] token.
-
-r[expr.literal.byte-char.literal]
-The expression's type is the primitive [`u8`][numeric types] type.
-
-r[expr.literal.byte-char.no-suffix]
-The token must not have a suffix.
-
-r[expr.literal.byte-char.literal-content]
-The token's _literal content_ is the sequence of characters following the first `U+0027` (`'`) and preceding the last `U+0027` (`'`) in the string representation of the token.
-
-r[expr.literal.byte-char.represented]
-The literal expression's _represented character_ is derived from the literal content as follows:
-
-r[expr.literal.byte-char.escape]
-* If the literal content is one of the following forms of escape sequence, the represented character is the escape sequence's escaped value:
-    * [Simple escapes]
-    * [8-bit escapes]
-
-r[expr.literal.byte-char.single]
-* Otherwise the represented character is the single character that makes up the literal content.
-
-r[expr.literal.byte-char.result]
-The expression's value is the represented character's [Unicode scalar value].
-
-> [!NOTE]
-> The permitted forms of a [BYTE_LITERAL] token ensure that these rules always produce a single character, whose Unicode scalar value is in the range of [`u8`][numeric types].
-
-Examples of byte literal expressions:
-
-```rust
-b'R';                              // 82
-b'\'';                             // 39
-b'\x52';                           // 82
-b'\xA0';                           // 160
-```
-
-r[expr.literal.byte-string]
-## Byte string literal expressions
-
-r[expr.literal.byte-string.intro]
-A byte string literal expression consists of a single [BYTE_STRING_LITERAL] or [RAW_BYTE_STRING_LITERAL] token.
-
-r[expr.literal.byte-string.type]
-The expression's type is a shared reference (with `static` lifetime) to an array whose element type is [`u8`][numeric types].
-That is, the type is `&'static [u8; N]`, where `N` is the number of bytes in the represented string described below.
-
-r[expr.literal.byte-string.no-suffix]
-The token must not have a suffix.
-
-r[expr.literal.byte-string.literal-content]
-The token's _literal content_ is the sequence of characters following the first `U+0022` (`"`) and preceding the last `U+0022` (`"`) in the string representation of the token.
-
-r[expr.literal.byte-string.represented]
-The literal expression's _represented string_ is a sequence of characters derived from the literal content as follows:
-
-r[expr.literal.byte-string.escape]
-* If the token is a [BYTE_STRING_LITERAL], each escape sequence of any of the following forms occurring in the literal content is replaced by the escape sequence's escaped value.
-    * [Simple escapes]
-    * [8-bit escapes]
-    * [String continuation escapes]
-
-  These replacements take place in left-to-right order.
-  For example, the token `b"\\x41"` is converted to the characters `\` `x` `4` `1`.
-
-r[expr.literal.byte-string.raw]
-* If the token is a [RAW_BYTE_STRING_LITERAL], the represented string is identical to the literal content.
-
-r[expr.literal.byte-string.result]
-The expression's value is a reference to a statically allocated array containing the [Unicode scalar values] of the characters in the represented string, in the same order.
-
-> [!NOTE]
-> The permitted forms of [BYTE_STRING_LITERAL] and [RAW_BYTE_STRING_LITERAL] tokens ensure that these rules always produce array element values in the range of [`u8`][numeric types].
-
-Examples of byte string literal expressions:
-
-```rust
-b"foo"; br"foo";                     // foo
-b"\"foo\""; br#""foo""#;             // "foo"
-
-b"foo #\"# bar";
-br##"foo #"# bar"##;                 // foo #"# bar
-
-b"\x52"; b"R"; br"R";                // R
-b"\\x52"; br"\x52";                  // \x52
-```
-
 r[expr.literal.c-string]
 ## C string literal expressions
 
@@ -364,7 +273,7 @@ r[expr.literal.int.intro]
 An integer literal expression consists of a single [INTEGER_LITERAL] token.
 
 r[expr.literal.int.suffix]
-If the token has a [suffix], the suffix must be the name of one of the [primitive integer types][numeric types]: `u8`, `i8`, `u16`, `i16`, `u32`, `i32`, `u64`, `i64`, `u128`, `i128`, `usize`, or `isize`, and the expression has that type.
+If the token has a [suffix], the suffix must be the name of one of the [primitive integer types][numeric types]: `u32`, `i32`, `usize`, or `isize`, and the expression has that type.
 
 r[expr.literal.int.infer]
 If the token has no suffix, the expression's type is determined by type inference:

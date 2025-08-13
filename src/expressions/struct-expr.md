@@ -4,35 +4,31 @@ r[expr.struct]
 r[expr.struct.syntax]
 ```grammar,expressions
 StructExpression ->
-    PathInExpression `{` (StructExprFields | StructBase)? `}`
+    ( IDENTIFIER | Self ) `{` (StructExprFields | StructBase)? `}`
 
 StructExprFields ->
-    StructExprField (`,` StructExprField)* (`,` StructBase | `,`?)
+    StructExprField (`,` StructExprField)* `,`?
 
 StructExprField ->
-    OuterAttribute*
-    (
         IDENTIFIER
       | IDENTIFIER `:` Expression
-    )
 
-StructBase -> `..` Expression
 ```
 
 r[expr.struct.intro]
 A *struct expression* creates a struct, enum, or union value.
-It consists of a path to a [struct], [enum variant], or [union] item followed by the values for the fields of the item.
+It consists of a path to a [struct] or [enum variant] item followed by the values for the fields of the item.
 
 The following are examples of struct expressions:
 
 ```rust
-# struct Point { x: f64, y: f64 }
-# struct NothingInMe { }
-# mod game { pub struct User<'a> { pub name: &'a str, pub age: u32, pub score: usize } }
-# enum Enum { Variant {} }
-Point {x: 10.0, y: 20.0};
+struct Point { x: f64, y: f64 }
+struct NothingInMe { }
+struct User { name: String, age: u32, score: usize }
+enum Enum { Variant {} }
+Point { x: 10.0, y: 20.0 };
 NothingInMe {};
-let u = game::User {name: "Joe", age: 35, score: 100_000};
+let u = User { name: "Joe".to_string(), age: 35, score: 100_000 };
 Enum::Variant {};
 ```
 
@@ -58,56 +54,6 @@ r[expr.struct.field]
 r[expr.struct.field.intro]
 A struct expression with fields enclosed in curly braces allows you to specify the value for each individual field in any order.
 The field name is separated from its value with a colon.
-
-r[expr.struct.field.union-constraint]
-A value of a [union] type can only be created using this syntax, and it must specify exactly one field.
-
-r[expr.struct.update]
-## Functional update syntax
-
-r[expr.struct.update.intro]
-A struct expression that constructs a value of a struct type can terminate with the syntax `..` followed by an expression to denote a functional update.
-
-r[expr.struct.update.base-same-type]
-The expression following `..` (the base) must have the same struct type as the new struct type being formed.
-
-r[expr.struct.update.fields]
-The entire expression uses the given values for the fields that were specified and moves or copies the remaining fields from the base expression.
-
-r[expr.struct.update.visibility-constraint]
-As with all struct expressions, all of the fields of the struct must be [visible], even those not explicitly named.
-
-```rust
-# struct Point3d { x: i32, y: i32, z: i32 }
-let mut base = Point3d {x: 1, y: 2, z: 3};
-let y_ref = &mut base.y;
-Point3d {y: 0, z: 10, .. base}; // OK, only base.x is accessed
-drop(y_ref);
-```
-
-r[expr.struct.brace-restricted-positions]
-Struct expressions can't be used directly in a [loop] or [if] expression's head, or in the [scrutinee] of an [if let] or [match] expression.
-However, struct expressions can be used in these situations if they are within another expression, for example inside [parentheses].
-
-r[expr.struct.tuple-field]
-> [!NOTE]
-> Numeric field names (e.g., `0:`, `1:`) for struct construction are not allowed because tuple structs are not part of this specification.
-
-r[expr.struct.field.named]
-### Struct field init shorthand
-
-When initializing a data structure (struct, enum, union) with named (but not numbered) fields, it is allowed to write `fieldname` as a shorthand for `fieldname: fieldname`.
-This allows a compact syntax with less duplication.
-For example:
-
-```rust
-# struct Point3d { x: i32, y: i32, z: i32 }
-# let x = 0;
-# let y_value = 0;
-# let z = 0;
-Point3d { x: x, y: y_value, z: z };
-Point3d { x, y: y_value, z };
-```
 
 [enum variant]: ../items/enumerations.md
 [if let]: if-expr.md#if-let-patterns

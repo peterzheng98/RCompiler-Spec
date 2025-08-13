@@ -15,13 +15,6 @@ The syntax of a call expression is an expression, called the *function operand*,
 r[expr.call.convergence]
 If the function eventually returns, then the expression completes.
 
-r[expr.call.trait]
-For [non-function types], the expression `f(...)` uses the method on one of the following traits based on the function operand:
-
-- [`Fn`] or [`AsyncFn`] --- shared reference.
-- [`FnMut`] or [`AsyncFnMut`] --- mutable reference.
-- [`FnOnce`] or [`AsyncFnOnce`] --- value.
-
 r[expr.call.autoref-deref]
 An automatic borrow will be taken if needed.
 The function operand will also be [automatically dereferenced] as required.

@@ -8,7 +8,6 @@ Statement ->
     | Item
     | LetStatement
     | ExpressionStatement
-    | OuterAttribute* MacroInvocationSemi
 ```
 
 r[statement.intro]
@@ -29,7 +28,7 @@ r[statement.item]
 ### Item declarations
 
 r[statement.item.intro]
-An *item declaration statement* has a syntactic form identical to an [item declaration][item] within a [module].
+An *item declaration statement* has a syntactic form identical to an [item declaration][item].
 
 r[statement.item.scope]
 Declaring an item within a statement block restricts its [scope] to the block containing the statement.
@@ -59,7 +58,7 @@ r[statement.let]
 r[statement.let.syntax]
 ```grammar,statements
 LetStatement ->
-    OuterAttribute* `let` PatternNoTopAlt ( `:` Type )?
+    `let` PatternNoTopAlt ( `:` Type )?
     (
           `=` Expression
         | `=` Expression _except [LazyBooleanExpression] or end with a `}`_ `else` BlockExpression
