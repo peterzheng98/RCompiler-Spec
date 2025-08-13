@@ -19,6 +19,8 @@ r[type.struct.field-visibility]
 The fields of a `struct` may be qualified by [visibility modifiers], to allow
 access to data in a struct outside a module.
 
+In RCompiler, the structs are always visible without any visibility modifiers.
+
 > [!NOTE]
 > Tuple struct types are not supported in this specification. Only named-field struct types are available.
 

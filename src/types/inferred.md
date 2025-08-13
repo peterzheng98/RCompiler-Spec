@@ -11,13 +11,21 @@ The inferred type asks the compiler to infer the type if possible based on the
 surrounding information available.
 
 r[type.inferred.constraint]
-It cannot be used in item signatures.
+It cannot be used in item signatures. For example, 
 
-It is often used in generic arguments:
+```rust
+fn f(x: _) -> usize { x + 1 }
+```
+
+is not valid.
+
+It is often used in generic arguments in rust:
 
 ```rust
 let x: Vec<_> = (0..10).collect();
 ```
+
+But we neither have generic parameters nor a `Vec`.
 
 <!--
   What else should be said here?

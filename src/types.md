@@ -19,27 +19,19 @@ The list of types is:
 
 * Primitive types:
     * [Boolean] --- `bool`
-    * [Numeric] --- integer and float
+    * [Numeric] --- integer
     * [Textual] --- `char` and `str`
-    * [Never] --- `!` --- a type with no values
 * Sequence types:
-    * [Tuple]
     * [Array]
     * [Slice]
 * User-defined types:
     * [Struct]
     * [Enum]
-    * [Union]
-* Function types:
-    * [Functions]
-    * [Closures]
 * Pointer types:
     * [References]
-    * [Raw pointers]
-    * [Function pointers]
-* Trait types:
+<!-- * Trait types:
     * [Trait objects]
-    * [Impl trait]
+    * [Impl trait] -->
 
 r[type.name]
 ## Type expressions
@@ -48,24 +40,14 @@ r[type.name.syntax]
 ```grammar,types
 Type ->
       TypeNoBounds
-    | ImplTraitType
-    | TraitObjectType
 
 TypeNoBounds ->
-      ParenthesizedType
-    | ImplTraitTypeOneBound
-    | TraitObjectTypeOneBound
-    | TypePath
-    | TupleType
-    | NeverType
-    | RawPointerType
+      TypePath
     | ReferenceType
     | ArrayType
     | SliceType
     | InferredType
     | QualifiedPathInType
-    | BareFunctionType
-    | MacroInvocation
 ```
 
 r[type.name.intro]
@@ -100,35 +82,13 @@ r[type.name.never]
 r[type.name.macro-expansion]
 * [Macros] which expand to a type expression.
 
-r[type.name.parenthesized]
-### Parenthesized types
-
-r[type.name.parenthesized.syntax]
-```grammar,types
-ParenthesizedType -> `(` Type `)`
-```
-
-r[type.name.parenthesized.intro]
-In some situations the combination of types may be ambiguous. Use parentheses
-around a type to avoid ambiguity. For example, the `+` operator for [type
-boundaries] within a [reference type] is unclear where the
-boundary applies, so the use of parentheses is required. Grammar rules that
-require this disambiguation use the [TypeNoBounds] rule instead of
-[Type][grammar-Type].
-
-```rust
-# use std::any::Any;
-type T<'a> = &'a (dyn Any + Send);
-```
-
 r[type.recursive]
 ## Recursive types
 
 r[type.recursive.intro]
-Nominal types &mdash; [structs], [enumerations], and [unions] &mdash; may be
-recursive. That is, each `enum` variant or `struct` or `union` field may
-refer, directly or indirectly, to the enclosing `enum` or `struct` type
-itself.
+Nominal types &mdash; [structs] and [enumerations] &mdash; may be
+recursive. That is, each `enum` variant or `struct` field may
+refer, directly or indirectly, to the enclosing `enum` or `struct` type itself.
 
 r[type.recursive.constraint]
 Such recursion has restrictions:
