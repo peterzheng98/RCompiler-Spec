@@ -3,30 +3,12 @@ r[items]
 
 r[items.syntax]
 ```grammar,items
-Item ->
-    OuterAttribute* ( VisItem | MacroItem )
-
-VisItem ->
-    Visibility?
-    (
-        Module
-      | ExternCrate
-      | UseDeclaration
-      | Function
-      | TypeAlias
+Item -> Function
       | Struct
       | Enumeration
-      | Union
       | ConstantItem
-      | StaticItem
       | Trait
       | Implementation
-      | ExternBlock
-    )
-
-MacroItem ->
-      MacroInvocationSemi
-    | MacroRulesDefinition
 ```
 
 r[items.intro]
@@ -42,22 +24,15 @@ execution, and may reside in read-only memory.
 r[items.kinds]
 There are several kinds of items:
 
-* [modules]
-* [`extern crate` declarations]
-* [`use` declarations]
 * [function definitions]
-* [type definitions]
 * [struct definitions]
 * [enumeration definitions]
-* [union definitions]
 * [constant items]
-* [static items]
 * [trait definitions]
 * [implementations]
-* [`extern` blocks]
 
 r[items.locations]
-Items may be declared in the [root of the crate], a [module][modules], or a [block expression].
+Items may be declared in the [root of the crate] or a [block expression].
 
 r[items.associated-locations]
 A subset of items, called [associated items], may be declared in [traits] and [implementations].

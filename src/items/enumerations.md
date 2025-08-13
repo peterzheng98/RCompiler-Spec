@@ -4,12 +4,11 @@ r[items.enum]
 r[items.enum.syntax]
 ```grammar,items
 Enumeration ->
-    `enum` IDENTIFIER GenericParams? WhereClause? `{` EnumVariants? `}`
+    `enum` IDENTIFIER `{` EnumVariants? `}`
 
 EnumVariants -> EnumVariant ( `,` EnumVariant )* `,`?
 
 EnumVariant ->
-    OuterAttribute* Visibility?
     IDENTIFIER ( EnumVariantTuple | EnumVariantStruct )? EnumVariantDiscriminant?
 
 EnumVariantTuple -> `(` TupleFields? `)`

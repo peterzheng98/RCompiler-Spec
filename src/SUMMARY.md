@@ -29,7 +29,6 @@
     - [Constant items](items/constant-items.md)
     - [Traits](items/traits.md)
     - [Implementations](items/implementations.md)
-    - [Generic parameters](items/generics.md)
     - [Associated Items](items/associated-items.md)
 
 - [Statements and expressions](statements-and-expressions.md)
@@ -82,6 +81,8 @@
     - [Paths](paths.md)
     - [Name resolution](names/name-resolution.md)
     - [Visibility and privacy](visibility-and-privacy.md)
+
+- [Constant Evaluation](const_eval.md)
 
 - [Appendices](appendices.md)
     - [Grammar summary](grammar.md)
