@@ -38,8 +38,7 @@ r[type.name]
 
 r[type.name.syntax]
 ```grammar,types
-Type ->
-      TypeNoBounds
+Type -> TypeNoBounds
 
 TypeNoBounds ->
       TypePath
@@ -55,32 +54,19 @@ A _type expression_ as defined in the [Type] grammar rule above is the syntax
 for referring to a type. It may refer to:
 
 r[type.name.sequence]
-* Sequence types ([tuple], [array], [slice]).
+* Sequence types ([array], [slice]).
 
 r[type.name.path]
 * [Type paths] which can reference:
     * Primitive types ([boolean], [numeric], [textual]).
     * Paths to an [item] ([struct], [enum], [union], [type alias], [trait]).
     * [`Self` path] where `Self` is the implementing type.
-    * Generic [type parameters].
 
 r[type.name.pointer]
-* Pointer types ([reference], [raw pointer], [function pointer]).
+* Pointer types ([reference]).
 
 r[type.name.inference]
 * The [inferred type] which asks the compiler to determine the type.
-
-r[type.name.grouped]
-* [Parentheses] which are used for disambiguation.
-
-r[type.name.trait]
-* Trait types: [Trait objects] and [impl trait].
-
-r[type.name.never]
-* The [never] type.
-
-r[type.name.macro-expansion]
-* [Macros] which expand to a type expression.
 
 r[type.recursive]
 ## Recursive types

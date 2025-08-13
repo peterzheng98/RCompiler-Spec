@@ -109,7 +109,7 @@ blackhole_lit!(1suffix); // OK
 
 r[lex.token.literal.suffix.parse]
 Suffixes on literal tokens which are interpreted as literal expressions or patterns are restricted.
-Any suffixes are rejected on non-numeric literal tokens,
+**Any suffixes are rejected on non-numeric literal tokens**,
 and numeric literal tokens are accepted only with suffixes from the list below.
 
 | Integer |
@@ -126,7 +126,7 @@ r[lex.token.literal.char.syntax]
 CHAR_LITERAL ->
     `'`
         ( ~[`'` `\` LF CR TAB] | QUOTE_ESCAPE | ASCII_ESCAPE )
-    `'` SUFFIX?
+    `'`
 
 QUOTE_ESCAPE -> `\'` | `\"`
 
@@ -151,7 +151,7 @@ STRING_LITERAL ->
       | QUOTE_ESCAPE
       | ASCII_ESCAPE
       | STRING_CONTINUE
-    )* `"` SUFFIX?
+    )* `"`
 
 STRING_CONTINUE -> `\` LF
 ```
@@ -198,7 +198,7 @@ r[lex.token.literal.str-raw]
 
 r[lex.token.literal.str-raw.syntax]
 ```grammar,lexer
-RAW_STRING_LITERAL -> `r` RAW_STRING_CONTENT SUFFIX?
+RAW_STRING_LITERAL -> `r` RAW_STRING_CONTENT
 
 RAW_STRING_CONTENT ->
       `"` ( ~CR )*? `"`
@@ -245,7 +245,7 @@ C_STRING_LITERAL ->
         ~[`"` `\` CR NUL]
       | BYTE_ESCAPE _except `\0` or `\x00`_
       | STRING_CONTINUE
-    )* `"` SUFFIX?
+    )* `"` 
 
 ```
 
@@ -297,7 +297,7 @@ r[lex.token.str-c-raw]
 r[lex.token.str-c-raw.syntax]
 ```grammar,lexer
 RAW_C_STRING_LITERAL ->
-    `cr` RAW_C_STRING_CONTENT SUFFIX?
+    `cr` RAW_C_STRING_CONTENT 
 
 RAW_C_STRING_CONTENT ->
       `"` ( ~[CR NUL] )*? `"`

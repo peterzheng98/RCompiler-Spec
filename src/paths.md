@@ -7,37 +7,14 @@ Paths are used to refer to [items], values, [types], [macros], and [attributes].
 
 Two examples of simple paths consisting of only identifier segments:
 
-<!-- ignore: syntax fragment -->
 ```rust,ignore
 x;
 x::y::z;
 ```
 
+In RCompiler, paths are only used for [enumeration], [struct], and [trait].
+
 ## Types of paths
-
-r[paths.simple]
-### Simple Paths
-
-r[paths.simple.syntax]
-```grammar,paths
-SimplePath ->
-    `::`? SimplePathSegment (`::` SimplePathSegment)*
-
-SimplePathSegment ->
-    IDENTIFIER | `super` | `self` | `crate` | `$crate`
-```
-
-r[paths.simple.intro]
-Simple paths are used in [visibility] markers, [attributes], [macros][mbe], and [`use`] items.
-For example:
-
-```rust
-use std::io::{self, Write};
-mod m {
-    #[clippy::cyclomatic_complexity = "0"]
-    pub (in super) fn f1() {}
-}
-```
 
 r[paths.expr]
 ### Paths in expressions
@@ -48,29 +25,10 @@ PathInExpression ->
     `::`? PathExprSegment (`::` PathExprSegment)*
 
 PathExprSegment ->
-    PathIdentSegment (`::` GenericArgs)?
+    PathIdentSegment
 
 PathIdentSegment ->
     IDENTIFIER | `super` | `self` | `Self` | `crate` | `$crate`
-
-GenericArgs ->
-      `<` `>`
-    | `<` ( GenericArg `,` )* GenericArg `,`? `>`
-
-GenericArg ->
-    Lifetime | Type | GenericArgsConst | GenericArgsBinding | GenericArgsBounds
-
-GenericArgsConst ->
-      BlockExpression
-    | LiteralExpression
-    | `-` LiteralExpression
-    | SimplePathSegment
-
-GenericArgsBinding ->
-    IDENTIFIER GenericArgs? `=` Type
-
-GenericArgsBounds ->
-    IDENTIFIER GenericArgs? `:` TypeParamBounds
 ```
 
 r[paths.expr.intro]
@@ -111,9 +69,7 @@ r[paths.qualified.syntax]
 ```grammar,paths
 QualifiedPathInExpression -> QualifiedPathType (`::` PathExprSegment)+
 
-QualifiedPathType -> `<` Type (`as` TypePath)? `>`
-
-QualifiedPathInType -> QualifiedPathType (`::` TypePathSegment)+
+QualifiedPathType -> `<` Type (`as` IDENTIFIER)? `>`
 ```
 
 r[paths.qualified.intro]
@@ -137,40 +93,6 @@ impl T2 for S {}
 S::f();  // Calls the inherent impl.
 <S as T1>::f();  // Calls the T1 trait function.
 <S as T2>::f();  // Calls the T2 trait function.
-```
-
-r[paths.type]
-### Paths in types
-
-r[paths.type.syntax]
-```grammar,paths
-TypePath -> `::`? TypePathSegment (`::` TypePathSegment)*
-
-TypePathSegment -> PathIdentSegment (`::`? (GenericArgs | TypePathFn))?
-
-TypePathFn -> `(` TypePathFnInputs? `)` (`->` TypeNoBounds)?
-
-TypePathFnInputs -> Type (`,` Type)* `,`?
-```
-
-r[paths.type.intro]
-Type paths are used within type definitions, trait bounds, type parameter bounds,
-and qualified paths.
-
-```rust
-# mod ops {
-#     pub struct Range<T> {f1: T}
-#     pub trait Index<T> {}
-#     pub struct Example<'a> {f1: &'a i32}
-# }
-# struct S;
-impl ops::Index<ops::Range<usize>> for S { /*...*/ }
-fn i<'a>() -> impl Iterator<Item = ops::Example<'a>> {
-    // ...
-#    const EXAMPLE: Vec<ops::Example<'static>> = Vec::new();
-#    EXAMPLE.into_iter()
-}
-type G = std::boxed::Box<dyn std::ops::FnOnce(isize) -> isize>;
 ```
 
 r[paths.qualifiers]
