@@ -91,6 +91,19 @@ r[paths.expr.impl-trait-params]
 The synthetic type parameters corresponding to `impl Trait` types are implicit,
 and these cannot be explicitly specified. -->
 
+r[paths.type]
+## Paths in types
+
+r[paths.type.syntax]
+```grammar,paths
+TypePath -> TypePathSegment
+
+TypePathSegment -> PathIdentSegment
+```
+
+r[paths.type.intro]
+Type paths are used within type definitions.
+
 r[paths.qualifiers]
 ## Path qualifiers
 

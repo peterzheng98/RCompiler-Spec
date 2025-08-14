@@ -5,8 +5,7 @@ In our language, there is only one crate. However, you can explore how to extend
 
 r[crate.syntax]
 ```grammar,items
-@root Crate ->
-    Item*
+@root Crate -> Item*
 ```
 
 > [!NOTE]

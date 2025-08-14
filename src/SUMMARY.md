@@ -66,21 +66,13 @@
     - [Dynamically Sized Types](dynamically-sized-types.md)
     - [Type layout](type-layout.md)
     - [Interior mutability](interior-mutability.md)
-    - [Subtyping and Variance](subtyping.md)
-    - [Trait and lifetime bounds](trait-bounds.md)
-    - [Type coercions](type-coercions.md)
     - [Destructors](destructors.md)
-    - [Lifetime elision](lifetime-elision.md)
-
-- [Special types and traits](special-types-and-traits.md)
 
 - [Names](names.md)
     - [Namespaces](names/namespaces.md)
     - [Scopes](names/scopes.md)
     - [Preludes](names/preludes.md)
     - [Paths](paths.md)
-    - [Name resolution](names/name-resolution.md)
-    - [Visibility and privacy](visibility-and-privacy.md)
 
 - [Constant Evaluation](const_eval.md)
 

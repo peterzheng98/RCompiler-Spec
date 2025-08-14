@@ -82,90 +82,19 @@ fn shadow_example() {
 }
 ```
 
-r[names.scopes.loop-label]
-## Loop label scopes
-
-r[names.scopes.loop-label.scope]
-[Loop labels] may be declared by a [loop expression].
-The scope of a loop label is from the point it is declared till the end of the loop expression.
-The scope does not extend into [items], [closures], [async blocks], [const arguments], [const contexts], and the iterator expression of the defining [`for` loop].
-
-```rust
-'a: for n in 0..3 {
-    if n % 2 == 0 {
-        break 'a;
-    }
-    fn inner() {
-        // Using 'a here would be an error.
-        // break 'a;
-    }
-}
-
-// The label is in scope for the expression of `while` loops.
-'a: while break 'a {}         // Loop does not run.
-'a: while let _ = break 'a {} // Loop does not run.
-
-// The label is not in scope in the defining `for` loop:
-'a: for outer in 0..5 {
-    // This will break the outer loop, skipping the inner loop and stopping
-    // the outer loop.
-    'a: for inner in { break 'a; 0..1 } {
-        println!("{}", inner); // This does not run.
-    }
-    println!("{}", outer); // This does not run, either.
-}
-
-```
-
-r[names.scopes.loop-label.shadow]
-Loop labels may shadow labels of the same name in outer scopes.
-References to a label refer to the closest definition.
-
-```rust
-// Loop label shadowing example.
-'a: for outer in 0..5 {
-    'a: for inner in 0..5 {
-        // This terminates the inner loop, but the outer loop continues to run.
-        break 'a;
-    }
-}
-```
-
 r[names.scopes.prelude]
 ## Prelude scopes
 
 r[names.scopes.prelude.intro]
 [Preludes] bring entities into scope of every module.
-The entities are not members of the module, but are implicitly queried during [name resolution].
-
-r[names.scopes.prelude.shadow]
-The prelude names may be shadowed by declarations in a module.
+The entities are not members of the module, but are implicitly queried during name resolution.
 
 r[names.scopes.prelude.layers]
 The preludes are layered such that one shadows another if they contain entities of the same name.
 The order that preludes may shadow other preludes is the following where earlier entries may shadow later ones:
 
-1. [Extern prelude]
-2. [Tool prelude]
-3. [`macro_use` prelude]
-4. [Standard library prelude]
-5. [Language prelude]
-
-r[names.scopes.macro_rules]
-## `macro_rules` scopes
-
-The scope of `macro_rules` macros is described in the [Macros By Example] chapter.
-The behavior depends on the use of the [`macro_use`] and [`macro_export`] attributes.
-
-r[names.scopes.derive]
-## Derive macro helper attributes
-
-r[names.scopes.derive.scope]
-[Derive macro helper attributes] are in scope in the item where their corresponding [`derive` attribute] is specified.
-The scope extends from just after the `derive` attribute to the end of the item. <!-- Note: Not strictly true, see https://github.com/rust-lang/rust/issues/79202, but this is the intention. -->
-
-r[names.scopes.derive.shadow]
-Helper attributes shadow other attributes of the same name in scope.
+1. [Standard library prelude]
+2. [Language prelude]
 
 r[names.scopes.self]
 ## `Self` scope
@@ -184,9 +113,6 @@ The implicit `Self` constructor in the value [namespace] of an [implementation] 
 struct Recursive {
     f1: Option<Box<Self>>
 }
-
-// Self type within generic parameters.
-struct SelfGeneric<T: Into<Self>>(T);
 
 // Self value constructor within an implementation.
 struct ImplExample();

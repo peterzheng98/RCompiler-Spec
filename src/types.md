@@ -46,7 +46,6 @@ TypeNoBounds ->
     | ArrayType
     | SliceType
     | InferredType
-    | QualifiedPathInType
 ```
 
 r[type.name.intro]
