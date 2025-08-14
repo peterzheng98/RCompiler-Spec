@@ -196,6 +196,70 @@ impl NonEmptyList {
     }
 }
 ```
+<!--
+r[paths.qualifiers.crate]
+### `crate`
+
+r[paths.qualifiers.crate.intro]
+`crate` resolves the path relative to the current crate.
+
+r[paths.qualifiers.crate.allowed-positions]
+`crate` can only be used as the first segment, without a preceding `::`.
+
+
+```rust
+const FN: i32 = 1;
+fn f() {
+    const FN: i32 = 20;
+    printlnInt(FN);
+}
+struct V;
+impl V {
+    const FN: i32 = 10;
+    fn f() {
+        printlnInt(Self::FN);
+    }
+}
+trait T{
+    const FN: i32 = 30;
+    fn f() {
+        printlnInt(Self::FN);
+    }
+}
+fn main() {
+    struct V;
+    trait T{
+        const FN: i32 = 300;
+        fn f() {
+            printlnInt(Self::FN);
+        }
+    }
+    impl crate::T for V {}
+    impl T for crate::V {}
+    const FN: i32 = 2;
+    {
+        printlnInt(FN); // 3
+        f(); // 20
+        {
+            f(); // 40
+            fn f() {
+                printlnInt(40);
+            }
+            printlnInt(FN); // 4
+            const FN: i32 = 4;
+            printlnInt(crate::FN); // 1
+            crate::f(); // 20
+            V::f(); // 30
+            crate::V::f(); // 10
+        }
+        const FN: i32 = 3;
+    }
+}
+```
+
+I suggest not implementing `crate` and letting it shadow.
+-->
+
 <!-- 
 r[paths.canonical]
 ## Canonical paths
