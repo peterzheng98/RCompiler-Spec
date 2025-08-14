@@ -5,9 +5,7 @@ In our language, there is only one crate. However, you can explore how to extend
 
 r[crate.syntax]
 ```grammar,items
-@root Crate ->
-    InnerAttribute*
-    Item*
+@root Crate -> Item*
 ```
 
 > [!NOTE]
@@ -34,8 +32,13 @@ anonymous (from the point of view of paths within the module) and any item
 within a crate has a canonical [module path] denoting its location
 within the crate's module tree.
 
+r[crate.inline-module]
+Every source file is a
+module, but not every module needs its own source file: [module
+definitions][module] can be nested within one file.
+
 r[crate.input-source]
-The Rust compiler is always invoked with a single source file as input, and
+The Rust compiler is always invoked with a **single** source file as input, and
 always produces a single output crate. The processing of that source file may
 result in other source files being loaded as modules. Source files have the
 extension `.rs`.
@@ -46,16 +49,8 @@ in the module tree of the current crate &mdash; are defined from outside the
 source file: either by an explicit [Module][grammar-Module] item in a referencing
 source file, or by the name of the crate itself.
 
-r[crate.inline-module]
-Every source file is a
-module, but not every module needs its own source file: [module
-definitions][module] can be nested within one file.
-
 r[crate.items]
-Each source file contains a sequence of zero or more [Item] definitions, and
-may optionally begin with any number of [attributes]
-that apply to the containing module, most of which influence the behavior of
-the compiler.
+Each source file contains a sequence of zero or more [Item] definitions.
 
 r[crate.main]
 ## Main Functions
@@ -96,6 +91,13 @@ fn main() -> () {
 > [!NOTE]
 > This specification differs from standard Rust, where `main` functions can have various return types (including `()`, `!`, or types implementing `Termination`) and do not require an explicit `exit` call. In this simplified language, all `main` functions must explicitly terminate with `exit(code)`.
 
+[^phase-distinction]: This distinction would also exist in an interpreter.
+    Static checks like syntactic analysis, type checking, and lints should
+    happen before the program is executed regardless of when it is executed.
+
+[^cratesourcefile]: A crate is somewhat analogous to an *assembly* in the
+    ECMA-335 CLI model, a *library* in the SML/NJ Compilation Manager, a *unit*
+    in the Owens and Flatt module system, or a *configuration* in Mesa.
 
 [Unicode alphanumeric]: char::is_alphanumeric
 [`!`]: types/never.md

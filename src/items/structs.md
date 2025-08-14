@@ -7,11 +7,11 @@ Struct ->
       StructStruct
 
 StructStruct ->
-    `struct` IDENTIFIER GenericParams? WhereClause? ( `{` StructFields? `}` | `;` )
+    `struct` IDENTIFIER ( `{` StructFields? `}` | `;` )
 
 StructFields -> StructField (`,` StructField)* `,`?
 
-StructField -> OuterAttribute* Visibility? IDENTIFIER `:` Type
+StructField -> IDENTIFIER `:` Type
 ```
 
 r[items.struct.intro]
@@ -50,8 +50,7 @@ let c = [Cookie, Cookie {}, Cookie, Cookie {}];
 ```
 
 r[items.struct.layout]
-The precise memory layout of a struct is not specified. One can specify a
-particular layout using the [`repr` attribute].
+The precise memory layout of a struct is not specified. You should design it yourself.
 
 [`repr` attribute]: ../type-layout.md#representations
 [constant]: constant-items.md

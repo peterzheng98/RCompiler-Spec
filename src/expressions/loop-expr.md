@@ -36,7 +36,7 @@ A `loop` expression repeats execution of its body continuously:
 `loop { println!("I live."); }`.
 
 r[expr.loop.infinite.diverging]
-A `loop` expression without an associated `break` expression is diverging and has type [`!`](../types/never.md).
+A `loop` expression without an associated `break` expression is diverging and has type [`!`](../types/never.md), which is considered UB.
 
 r[expr.loop.infinite.break]
 A `loop` expression containing associated [`break` expression(s)](#break-expressions) may terminate, and must have type compatible with the value of the `break` expression(s).

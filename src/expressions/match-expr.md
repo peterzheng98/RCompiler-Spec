@@ -5,7 +5,6 @@ r[expr.match.syntax]
 ```grammar,expressions
 MatchExpression ->
     `match` Scrutinee `{`
-        InnerAttribute*
         MatchArms?
     `}`
 
@@ -15,7 +14,7 @@ MatchArms ->
     ( MatchArm `=>` ( ExpressionWithoutBlock `,` | ExpressionWithBlock `,`? ) )*
     MatchArm `=>` Expression `,`?
 
-MatchArm -> OuterAttribute* Pattern MatchArmGuard?
+MatchArm -> Pattern MatchArmGuard?
 
 MatchArmGuard -> `if` Expression
 ```
@@ -149,16 +148,6 @@ This allows shared borrows to be used inside guards without moving out of the sc
 
 r[expr.match.guard.no-mutation]
 Moreover, by holding a shared reference while evaluating the guard, mutation inside guards is also prevented.
-
-r[expr.match.attributes]
-## Attributes on match arms
-
-r[expr.match.attributes.outer]
-Outer attributes are allowed on match arms.
-The only attributes that have meaning on match arms are [`cfg`] and the [lint check attributes].
-
-r[expr.match.attributes.inner]
-[Inner attributes] are allowed directly after the opening brace of the match expression in the same expression contexts as [attributes on block expressions].
 
 [`cfg`]: ../conditional-compilation.md
 [attributes on block expressions]: block-expr.md#attributes-on-block-expressions

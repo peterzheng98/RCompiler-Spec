@@ -16,43 +16,21 @@ r[names.namespaces.kinds]
 The following is a list of namespaces, with their corresponding entities:
 
 * Type Namespace
-    * [Module declarations]
-    * [External crate declarations]
-    * [External crate prelude] items
-    * [Struct], [union], [enum], enum variant declarations
+    * [Struct], [enum], enum variant declarations
     * [Trait item declarations]
-    * [Type aliases]
-    * [Associated type declarations]
     * Built-in types: [boolean], [numeric], and [textual]
-    * [Generic type parameters]
     * [`Self` type]
-    * [Tool attribute modules]
 * Value Namespace
     * [Function declarations]
     * [Constant item declarations]
-    * [Static item declarations]
     * [Struct constructors]
     * [Enum variant constructors]
     * [`Self` constructors]
-    * [Generic const parameters]
     * [Associated const declarations]
     * [Associated function declarations]
     * Local bindings --- [`let`], [`if let`], [`while let`], [`for`], [`match`]
-      arms, [function parameters], [closure parameters]
-    * Captured [closure] variables
-* Macro Namespace
-    * [`macro_rules` declarations]
-    * [Built-in attributes]
-    * [Tool attributes]
-    * [Function-like procedural macros]
-    * [Derive macros]
-    * [Derive macro helpers]
-    * [Attribute macros]
-* Lifetime Namespace
-    * [Generic lifetime parameters]
-* Label Namespace
-    * [Loop labels]
-    * [Block labels]
+      arms, [function parameters]
+
 
 An example of how overlapping names in different namespaces can be used unambiguously:
 
@@ -95,28 +73,6 @@ Even though struct, enum, and union fields are named, the named fields do not
 live in an explicit namespace. They can only be accessed via a [field
 expression], which only inspects the field names of the specific type being
 accessed.
-
-### Use declarations
-
-r[names.namespaces.without.use]
-A [use declaration] has named aliases that it imports into scope, but the
-`use` item itself does not belong to a specific namespace. Instead, it can
-introduce aliases into multiple namespaces, depending on the item kind being
-imported.
-
-r[names.namespaces.sub-namespaces]
-## Sub-namespaces
-
-r[names.namespaces.sub-namespaces.intro]
-The macro namespace is split into two sub-namespaces: one for [bang-style macros] and one for [attributes].
-When an attribute is resolved, any bang-style macros in scope will be ignored.
-And conversely resolving a bang-style macro will ignore attribute macros in scope.
-This prevents one style from shadowing another.
-
-For example, the [`cfg` attribute] and the [`cfg` macro] are two different entities with the same name in the macro namespace, but they can still be used in their respective context.
-
-r[names.namespaces.sub-namespaces.use-shadow]
-It is still an error for a [`use` import] to shadow another macro, regardless of their sub-namespaces.
 
 [`cfg` attribute]: ../conditional-compilation.md#the-cfg-attribute
 [`cfg` macro]: ../conditional-compilation.md#the-cfg-macro

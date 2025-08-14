@@ -19,53 +19,33 @@ The list of types is:
 
 * Primitive types:
     * [Boolean] --- `bool`
-    * [Numeric] --- integer and float
+    * [Numeric] --- integer
     * [Textual] --- `char` and `str`
-    * [Never] --- `!` --- a type with no values
 * Sequence types:
-    * [Tuple]
     * [Array]
     * [Slice]
 * User-defined types:
     * [Struct]
     * [Enum]
-    * [Union]
-* Function types:
-    * [Functions]
-    * [Closures]
 * Pointer types:
     * [References]
-    * [Raw pointers]
-    * [Function pointers]
-* Trait types:
+<!-- * Trait types:
     * [Trait objects]
-    * [Impl trait]
+    * [Impl trait] -->
 
 r[type.name]
 ## Type expressions
 
 r[type.name.syntax]
 ```grammar,types
-Type ->
-      TypeNoBounds
-    | ImplTraitType
-    | TraitObjectType
+Type -> TypeNoBounds
 
 TypeNoBounds ->
-      ParenthesizedType
-    | ImplTraitTypeOneBound
-    | TraitObjectTypeOneBound
-    | TypePath
-    | TupleType
-    | NeverType
-    | RawPointerType
+      TypePath
     | ReferenceType
     | ArrayType
     | SliceType
     | InferredType
-    | QualifiedPathInType
-    | BareFunctionType
-    | MacroInvocation
 ```
 
 r[type.name.intro]
@@ -73,68 +53,32 @@ A _type expression_ as defined in the [Type] grammar rule above is the syntax
 for referring to a type. It may refer to:
 
 r[type.name.sequence]
-* Sequence types ([tuple], [array], [slice]).
+* Sequence types ([array], [slice]).
 
 r[type.name.path]
 * [Type paths] which can reference:
     * Primitive types ([boolean], [numeric], [textual]).
     * Paths to an [item] ([struct], [enum], [union], [type alias], [trait]).
     * [`Self` path] where `Self` is the implementing type.
-    * Generic [type parameters].
 
 r[type.name.pointer]
-* Pointer types ([reference], [raw pointer], [function pointer]).
+* Pointer types ([reference]).
 
 r[type.name.inference]
 * The [inferred type] which asks the compiler to determine the type.
-
-r[type.name.grouped]
-* [Parentheses] which are used for disambiguation.
-
-r[type.name.trait]
-* Trait types: [Trait objects] and [impl trait].
-
-r[type.name.never]
-* The [never] type.
-
-r[type.name.macro-expansion]
-* [Macros] which expand to a type expression.
-
-r[type.name.parenthesized]
-### Parenthesized types
-
-r[type.name.parenthesized.syntax]
-```grammar,types
-ParenthesizedType -> `(` Type `)`
-```
-
-r[type.name.parenthesized.intro]
-In some situations the combination of types may be ambiguous. Use parentheses
-around a type to avoid ambiguity. For example, the `+` operator for [type
-boundaries] within a [reference type] is unclear where the
-boundary applies, so the use of parentheses is required. Grammar rules that
-require this disambiguation use the [TypeNoBounds] rule instead of
-[Type][grammar-Type].
-
-```rust
-# use std::any::Any;
-type T<'a> = &'a (dyn Any + Send);
-```
 
 r[type.recursive]
 ## Recursive types
 
 r[type.recursive.intro]
-Nominal types &mdash; [structs], [enumerations], and [unions] &mdash; may be
-recursive. That is, each `enum` variant or `struct` or `union` field may
-refer, directly or indirectly, to the enclosing `enum` or `struct` type
-itself.
+Nominal types &mdash; [structs] &mdash; may be
+recursive. That is, each `struct` field may
+refer, directly or indirectly, to the enclosing `struct` type itself.
 
 r[type.recursive.constraint]
 Such recursion has restrictions:
 
-* Recursive types must include a nominal type in the recursion (not mere [type
-  aliases], or other structural types such as [arrays] or [tuples]). So `type
+* Recursive types must include a nominal type in the recursion (not other structural types such as [arrays]). So `type
   Rec = &'static [Rec]` is not allowed.
 * The size of a recursive type must be finite; in other words the recursive
   fields of the type must be [pointer types].
@@ -142,12 +86,28 @@ Such recursion has restrictions:
 An example of a *recursive* type and its use:
 
 ```rust
-enum List<T> {
-    Nil,
-    Cons(T, Box<List<T>>)
+struct List {
+    data: usize,
+    // A struct can reference itself (as long as it is not 
+    // infinitely recursive).
+    next: Option<Box<Self>>,
 }
 
-let a: List<i32> = List::Cons(7, Box::new(List::Cons(13, Box::new(List::Nil))));
+impl List {
+    fn new(data: usize) -> Self {
+        List {
+            data,
+            next: None,
+        }
+    }
+
+    fn append(&mut self, value: usize) {
+        match &mut self.next {
+            Some(next) => next.append(value),
+            None => self.next = Some(Box::new(Self::new(value))),
+        }
+    }
+}
 ```
 
 [Array]: types/array.md

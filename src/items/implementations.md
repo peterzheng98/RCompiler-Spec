@@ -6,13 +6,12 @@ r[items.impl.syntax]
 Implementation -> InherentImpl | TraitImpl
 
 InherentImpl ->
-    `impl` GenericParams? Type WhereClause? `{`
+    `impl` Type `{`
         AssociatedItem*
     `}`
 
 TraitImpl ->
-    `unsafe`? `impl` GenericParams? `!`? TypePath `for` Type
-    WhereClause?
+    `impl` IDENTIFIER `for` Type
     `{`
         AssociatedItem*
     `}`
@@ -51,11 +50,6 @@ Inherent implementations can contain [associated functions] (including [methods]
 
 r[items.impl.inherent.type-alias]
 They cannot contain associated type aliases.
-
-r[items.impl.inherent.associated-item-path]
-The [path] to an associated item is any path to the implementing type,
-followed by the associated item's identifier as the final path
-component.
 
 r[items.impl.inherent.coherence]
 A type can also have multiple inherent implementations. An implementing type
@@ -118,10 +112,6 @@ r[items.impl.trait.associated-item-path]
 The path to the associated items is `<` followed by a path to the implementing
 type followed by `as` followed by a path to the trait followed by `>` as a path
 component followed by the associated item's path component.
-
-r[items.impl.trait.safety]
-[Unsafe traits] require the trait implementation to begin with the `unsafe`
-keyword.
 
 ```rust
 # #[derive(Copy, Clone)]
@@ -196,114 +186,6 @@ r[items.impl.trait.fundamental]
 Note that for the purposes of coherence, [fundamental types] are
 special. The `T` in `Box<T>` is not considered covered, and `Box<LocalType>`
 is considered local.
-
-r[items.impl.generics]
-## Generic Implementations
-
-r[items.impl.generics.intro]
-An implementation can take [generic parameters], which can be used in the rest
-of the implementation. Implementation parameters are written directly after the
-`impl` keyword.
-
-```rust
-# trait Seq<T> { fn dummy(&self, _: T) { } }
-impl<T> Seq<T> for Vec<T> {
-    /* ... */
-}
-impl Seq<bool> for u32 {
-    /* Treat the integer as a sequence of bits */
-}
-```
-
-r[items.impl.generics.usage]
-Generic parameters *constrain* an implementation if the parameter appears at
-least once in one of:
-
-* The implemented trait, if it has one
-* The implementing type
-* As an [associated type] in the [bounds] of a type that contains another
-  parameter that constrains the implementation
-
-r[items.impl.generics.constrain]
-Type and const parameters must always constrain the implementation. Lifetimes
-must constrain the implementation if the lifetime is used in an associated type.
-
-Examples of constraining situations:
-
-```rust
-# trait Trait{}
-# trait GenericTrait<T> {}
-# trait HasAssocType { type Ty; }
-# struct Struct;
-# struct GenericStruct<T>(T);
-# struct ConstGenericStruct<const N: usize>([(); N]);
-// T constrains by being an argument to GenericTrait.
-impl<T> GenericTrait<T> for i32 { /* ... */ }
-
-// T constrains by being an argument to GenericStruct
-impl<T> Trait for GenericStruct<T> { /* ... */ }
-
-// Likewise, N constrains by being an argument to ConstGenericStruct
-impl<const N: usize> Trait for ConstGenericStruct<N> { /* ... */ }
-
-// T constrains by being in an associated type in a bound for type `U` which is
-// itself a generic parameter constraining the trait.
-impl<T, U> GenericTrait<U> for u32 where U: HasAssocType<Ty = T> { /* ... */ }
-
-// Like previous, except the type is `(U, isize)`. `U` appears inside the type
-// that includes `T`, and is not the type itself.
-impl<T, U> GenericStruct<U> where (U, isize): HasAssocType<Ty = T> { /* ... */ }
-```
-
-Examples of non-constraining situations:
-
-```rust,compile_fail
-// The rest of these are errors, since they have type or const parameters that
-// do not constrain.
-
-// T does not constrain since it does not appear at all.
-impl<T> Struct { /* ... */ }
-
-// N does not constrain for the same reason.
-impl<const N: usize> Struct { /* ... */ }
-
-// Usage of T inside the implementation does not constrain the impl.
-impl<T> Struct {
-    fn uses_t(t: &T) { /* ... */ }
-}
-
-// T is used as an associated type in the bounds for U, but U does not constrain.
-impl<T, U> Struct where U: HasAssocType<Ty = T> { /* ... */ }
-
-// T is used in the bounds, but not as an associated type, so it does not constrain.
-impl<T, U> GenericTrait<U> for u32 where U: GenericTrait<T> {}
-```
-
-Example of an allowed unconstraining lifetime parameter:
-
-```rust
-# struct Struct;
-impl<'a> Struct {}
-```
-
-Example of a disallowed unconstraining lifetime parameter:
-
-```rust,compile_fail
-# struct Struct;
-# trait HasAssocType { type Ty; }
-impl<'a> HasAssocType for Struct {
-    type Ty = &'a Struct;
-}
-```
-
-r[items.impl.attributes]
-## Attributes on Implementations
-
-Implementations may contain outer [attributes] before the `impl` keyword and
-inner [attributes] inside the brackets that contain the associated items. Inner
-attributes must come before any associated items. The attributes that have
-meaning here are [`cfg`], [`deprecated`], [`doc`], and [the lint check
-attributes].
 
 [trait]: traits.md
 [associated constants]: associated-items.md#associated-constants

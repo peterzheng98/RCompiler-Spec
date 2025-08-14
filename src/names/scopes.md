@@ -82,230 +82,19 @@ fn shadow_example() {
 }
 ```
 
-r[names.scopes.generic-parameters]
-## Generic parameter scopes
-
-r[names.scopes.generic-parameters.param-list]
-Generic parameters are declared in a [GenericParams] list.
-The scope of a generic parameter is within the item it is declared on.
-
-r[names.scopes.generic-parameters.order-independent]
-All parameters are in scope within the generic parameter list regardless of the order they are declared.
-The following shows some examples where a parameter may be referenced before it is declared:
-
-```rust
-// The 'b bound is referenced before it is declared.
-fn params_scope<'a: 'b, 'b>() {}
-
-# trait SomeTrait<const Z: usize> {}
-// The const N is referenced in the trait bound before it is declared.
-fn f<T: SomeTrait<N>, const N: usize>() {}
-```
-
-r[names.scopes.generic-parameters.bounds]
-Generic parameters are also in scope for type bounds and where clauses, for example:
-
-```rust
-# trait SomeTrait<'a, T> {}
-// The <'a, U> for `SomeTrait` refer to the 'a and U parameters of `bounds_scope`.
-fn bounds_scope<'a, T: SomeTrait<'a, U>, U>() {}
-
-fn where_scope<'a, T, U>()
-    where T: SomeTrait<'a, U>
-{}
-```
-
-r[names.scopes.generic-parameters.inner-items]
-It is an error for [items] declared inside a function to refer to a generic parameter from their outer scope.
-
-```rust,compile_fail
-fn example<T>() {
-    fn inner(x: T) {} // ERROR: can't use generic parameters from outer function
-}
-```
-
-### Generic parameter shadowing
-
-r[names.scopes.generic-parameters.shadow]
-It is an error to shadow a generic parameter with the exception that items declared within functions are allowed to shadow generic parameter names from the function.
-
-```rust
-fn example<'a, T, const N: usize>() {
-    // Items within functions are allowed to shadow generic parameter in scope.
-    fn inner_lifetime<'a>() {} // OK
-    fn inner_type<T>() {} // OK
-    fn inner_const<const N: usize>() {} // OK
-}
-```
-
-```rust,compile_fail
-trait SomeTrait<'a, T, const N: usize> {
-    fn example_lifetime<'a>() {} // ERROR: 'a is already in use
-    fn example_type<T>() {} // ERROR: T is already in use
-    fn example_const<const N: usize>() {} // ERROR: N is already in use
-    fn example_mixed<const T: usize>() {} // ERROR: T is already in use
-}
-```
-
-r[names.scopes.lifetimes]
-### Lifetime scopes
-
-Lifetime parameters are declared in a [GenericParams] list and [higher-ranked trait bounds][hrtb].
-
-r[names.scopes.lifetimes.special]
-The `'static` lifetime and [placeholder lifetime] `'_` have a special meaning and cannot be declared as a parameter.
-
-#### Lifetime generic parameter scopes
-
-r[names.scopes.lifetimes.generic]
-[Constant] and [static] items and [const contexts] only ever allow `'static` lifetime references, so no other lifetime may be in scope within them.
-[Associated consts] do allow referring to lifetimes declared in their trait or implementation.
-
-#### Higher-ranked trait bound scopes
-
-r[names.scopes.lifetimes.higher-ranked]
-The scope of a lifetime parameter declared as a [higher-ranked trait bound][hrtb] depends on the scenario where it is used.
-
-* As a [TypeBoundWhereClauseItem] the declared lifetimes are in scope in the type and the type bounds.
-* As a [TraitBound] the declared lifetimes are in scope within the bound type path.
-* As a [BareFunctionType] the declared lifetimes are in scope within the function parameters and return type.
-
-```rust
-# trait Trait<'a>{}
-
-fn where_clause<T>()
-    // 'a is in scope in both the type and the type bounds.
-    where for <'a> &'a T: Trait<'a>
-{}
-
-fn bound<T>()
-    // 'a is in scope within the bound.
-    where T: for <'a> Trait<'a>
-{}
-
-# struct Example<'a> {
-#     field: &'a u32
-# }
-
-// 'a is in scope in both the parameters and return type.
-type FnExample = for<'a> fn(x: Example<'a>) -> Example<'a>;
-```
-
-#### Impl trait restrictions
-
-r[names.scopes.lifetimes.impl-trait]
-[Impl trait] types can only reference lifetimes declared on a function or implementation.
-
-<!-- not able to demonstrate the scope error because the compiler panics
-     https://github.com/rust-lang/rust/issues/67830
--->
-```rust
-# trait Trait1 {
-#     type Item;
-# }
-# trait Trait2<'a> {}
-#
-# struct Example;
-#
-# impl Trait1 for Example {
-#     type Item = Element;
-# }
-#
-# struct Element;
-# impl<'a> Trait2<'a> for Element {}
-#
-// The `impl Trait2` here is not allowed to refer to 'b but it is allowed to
-// refer to 'a.
-fn foo<'a>() -> impl for<'b> Trait1<Item = impl Trait2<'a> + use<'a>> {
-    // ...
-#    Example
-}
-```
-
-r[names.scopes.loop-label]
-## Loop label scopes
-
-r[names.scopes.loop-label.scope]
-[Loop labels] may be declared by a [loop expression].
-The scope of a loop label is from the point it is declared till the end of the loop expression.
-The scope does not extend into [items], [closures], [async blocks], [const arguments], [const contexts], and the iterator expression of the defining [`for` loop].
-
-```rust
-'a: for n in 0..3 {
-    if n % 2 == 0 {
-        break 'a;
-    }
-    fn inner() {
-        // Using 'a here would be an error.
-        // break 'a;
-    }
-}
-
-// The label is in scope for the expression of `while` loops.
-'a: while break 'a {}         // Loop does not run.
-'a: while let _ = break 'a {} // Loop does not run.
-
-// The label is not in scope in the defining `for` loop:
-'a: for outer in 0..5 {
-    // This will break the outer loop, skipping the inner loop and stopping
-    // the outer loop.
-    'a: for inner in { break 'a; 0..1 } {
-        println!("{}", inner); // This does not run.
-    }
-    println!("{}", outer); // This does not run, either.
-}
-
-```
-
-r[names.scopes.loop-label.shadow]
-Loop labels may shadow labels of the same name in outer scopes.
-References to a label refer to the closest definition.
-
-```rust
-// Loop label shadowing example.
-'a: for outer in 0..5 {
-    'a: for inner in 0..5 {
-        // This terminates the inner loop, but the outer loop continues to run.
-        break 'a;
-    }
-}
-```
-
 r[names.scopes.prelude]
 ## Prelude scopes
 
 r[names.scopes.prelude.intro]
 [Preludes] bring entities into scope of every module.
-The entities are not members of the module, but are implicitly queried during [name resolution].
-
-r[names.scopes.prelude.shadow]
-The prelude names may be shadowed by declarations in a module.
+The entities are not members of the module, but are implicitly queried during name resolution.
 
 r[names.scopes.prelude.layers]
 The preludes are layered such that one shadows another if they contain entities of the same name.
 The order that preludes may shadow other preludes is the following where earlier entries may shadow later ones:
 
-1. [Extern prelude]
-2. [Tool prelude]
-3. [`macro_use` prelude]
-4. [Standard library prelude]
-5. [Language prelude]
-
-r[names.scopes.macro_rules]
-## `macro_rules` scopes
-
-The scope of `macro_rules` macros is described in the [Macros By Example] chapter.
-The behavior depends on the use of the [`macro_use`] and [`macro_export`] attributes.
-
-r[names.scopes.derive]
-## Derive macro helper attributes
-
-r[names.scopes.derive.scope]
-[Derive macro helper attributes] are in scope in the item where their corresponding [`derive` attribute] is specified.
-The scope extends from just after the `derive` attribute to the end of the item. <!-- Note: Not strictly true, see https://github.com/rust-lang/rust/issues/79202, but this is the intention. -->
-
-r[names.scopes.derive.shadow]
-Helper attributes shadow other attributes of the same name in scope.
+1. [Standard library prelude]
+2. [Language prelude]
 
 r[names.scopes.self]
 ## `Self` scope
@@ -324,9 +113,6 @@ The implicit `Self` constructor in the value [namespace] of an [implementation] 
 struct Recursive {
     f1: Option<Box<Self>>
 }
-
-// Self type within generic parameters.
-struct SelfGeneric<T: Into<Self>>(T);
 
 // Self value constructor within an implementation.
 struct ImplExample();

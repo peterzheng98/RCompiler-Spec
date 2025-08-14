@@ -4,7 +4,7 @@ r[items.traits]
 r[items.traits.syntax]
 ```grammar,items
 Trait ->
-    `unsafe`? `trait` IDENTIFIER GenericParams? ( `:` TypeParamBounds? )? WhereClause?
+    `trait` IDENTIFIER ( `:` TypeParamBounds? )? 
     `{`
         AssociatedItem*
     `}`
@@ -15,8 +15,8 @@ A _trait_ describes an abstract interface that types can implement. This
 interface consists of [associated items], which come in three varieties:
 
 - [functions](associated-items.md#associated-functions-and-methods)
-- [types](associated-items.md#associated-types)
 - [constants](associated-items.md#associated-constants)
+<!-- - [types](associated-items.md#associated-types) -->
 
 r[items.traits.namespace]
 The trait declaration defines a trait in the [type namespace] of the module or block where it is located.
@@ -26,9 +26,8 @@ Associated items are defined as members of the trait within their respective nam
 
 r[items.traits.self-param]
 All traits define an implicit type parameter `Self` that refers to "the type
-that is implementing this interface". Traits may also contain additional type
-parameters. These type parameters, including `Self`, may be constrained by
-other traits and so forth [as usual][generics].
+that is implementing this interface". Traits do not contain additional type
+parameters.
 
 r[items.traits.impls]
 Traits are implemented for specific types through separate [implementations].
@@ -55,7 +54,7 @@ trait Example {
 
 r[items.traits.const-fn]
 Trait functions are not allowed to be [`const`].
-
+<!-- 
 r[items.traits.bounds]
 ## Trait bounds
 
@@ -200,7 +199,7 @@ struct S;
 impl<A> Super<A> for S {}
 impl WithSelf for S {}
 let obj: Box<dyn WithSelf> = Box::new(S); // ERROR: cannot use `Self` type parameter
-```
+``` -->
 
 r[items.traits.supertraits]
 ## Supertraits
@@ -271,7 +270,7 @@ Similarly, here is an example of calling supertrait methods on trait objects.
 let circle = Box::new(circle) as Box<dyn Circle>;
 let nonsense = circle.radius() * circle.area();
 ```
-
+<!-- 
 r[items.traits.safety]
 ## Unsafe traits
 
@@ -280,7 +279,7 @@ Traits items that begin with the `unsafe` keyword indicate that *implementing* t
 trait may be [unsafe]. It is safe to use a correctly implemented unsafe trait.
 The [trait implementation] must also begin with the `unsafe` keyword.
 
-[`Sync`] and [`Send`] are examples of unsafe traits.
+[`Sync`] and [`Send`] are examples of unsafe traits. -->
 
 r[items.traits.params]
 ## Parameter patterns
@@ -349,44 +348,6 @@ r[items.traits.params.restriction-patterns.edition2018]
 > ```
 >
 > Beginning in 2018, all irrefutable patterns are allowed as described in [items.traits.params.patterns-with-body].
-
-r[items.traits.associated-visibility]
-## Item visibility
-
-r[items.traits.associated-visibility.intro]
-Trait items syntactically allow a [Visibility] annotation, but this is
-rejected when the trait is validated. This allows items to be parsed with a
-unified syntax across different contexts where they are used. As an example,
-an empty `vis` macro fragment specifier can be used for trait items, where the
-macro rule may be used in other situations where visibility is allowed.
-
-```rust
-macro_rules! create_method {
-    ($vis:vis $name:ident) => {
-        $vis fn $name(&self) {}
-    };
-}
-
-trait T1 {
-    // Empty `vis` is allowed.
-    create_method! { method_of_t1 }
-}
-
-struct S;
-
-impl S {
-    // Visibility is allowed here.
-    create_method! { pub method_of_s }
-}
-
-impl T1 for S {}
-
-fn main() {
-    let s = S;
-    s.method_of_t1();
-    s.method_of_s();
-}
-```
 
 [WildcardPattern]: ../patterns.md#wildcard-pattern
 [bounds]: ../trait-bounds.md

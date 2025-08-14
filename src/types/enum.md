@@ -19,7 +19,20 @@ corresponding `enum` type, as well as the size needed to store a discriminant.
 
 r[type.enum.name]
 Enum types cannot be denoted *structurally* as types, but must be denoted by
-named reference to an [`enum` item].
+named reference to an [`enum` item]. For example,
+
+```rust
+fn g(e: enum { A, B }) { }
+```
+
+is not supported, which should be written as:
+
+```rust
+enum E { A, B }
+fn g(e: E) { }
+```
+
+
 
 [^enumtype]: The `enum` type is analogous to a `data` constructor declaration in
              Haskell, or a *pick ADT* in Limbo.

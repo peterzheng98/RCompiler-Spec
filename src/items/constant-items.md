@@ -4,7 +4,7 @@ r[items.const]
 r[items.const.syntax]
 ```grammar,items
 ConstantItem ->
-    `const` ( IDENTIFIER | `_` ) `:` Type ( `=` Expression )? `;`
+    `const` IDENTIFIER `:` Type ( `=` Expression )? `;`
 ```
 
 r[items.const.intro]
@@ -81,30 +81,6 @@ const C: &mut u8 = unsafe { &mut S }; // ERROR not allowed
 
 r[items.const.expr-omission]
 The constant expression may only be omitted in a [trait definition].
-
-r[items.const.destructor]
-## Constants with Destructors
-
-Constants can contain destructors. Destructors are run when the value goes out
-of scope.
-
-```rust
-struct TypeWithDestructor(i32);
-
-impl Drop for TypeWithDestructor {
-    fn drop(&mut self) {
-        println!("Dropped. Held {}.", self.0);
-    }
-}
-
-const ZERO_WITH_DESTRUCTOR: TypeWithDestructor = TypeWithDestructor(0);
-
-fn create_and_drop_zero_with_destructor() {
-    let x = ZERO_WITH_DESTRUCTOR;
-    // x gets dropped at end of function, calling drop.
-    // prints "Dropped. Held 0.".
-}
-```
 
 r[items.const.unnamed]
 ## Unnamed constant

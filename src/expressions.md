@@ -8,41 +8,27 @@ Expression ->
     | ExpressionWithBlock
 
 ExpressionWithoutBlock ->
-    OuterAttribute*
-    (
         LiteralExpression
       | PathExpression
       | OperatorExpression
       | GroupedExpression
       | ArrayExpression
-      | AwaitExpression
       | IndexExpression
-      | TupleExpression
-      | TupleIndexingExpression
       | StructExpression
       | CallExpression
       | MethodCallExpression
       | FieldExpression
-      | ClosureExpression
-      | AsyncBlockExpression
       | ContinueExpression
       | BreakExpression
-      | RangeExpression
       | ReturnExpression
       | UnderscoreExpression
-      | MacroInvocation
-    )
 
 ExpressionWithBlock ->
-    OuterAttribute*
-    (
         BlockExpression
       | ConstBlockExpression
-      | UnsafeBlockExpression
       | LoopExpression
       | IfExpression
       | MatchExpression
-    )
 ```
 
 r[expr.intro]
@@ -80,7 +66,6 @@ Binary Operators at the same precedence level are grouped in the order given by 
 | [Method calls][expr.method] |                     |
 | [Field expressions][expr.field] | left to right   |
 | [Function calls][expr.call], [array indexing][expr.array.index] | |
-| [`?`][expr.try]             |                     |
 | Unary [`-`][expr.negate] [`!`][expr.negate] [`*`][expr.deref] [borrow][expr.operator.borrow] | |
 | [`as`][expr.as]             | left to right       |
 | [`*`][expr.arith-logic] [`/`][expr.arith-logic] [`%`][expr.arith-logic] | left to right       |
@@ -92,9 +77,8 @@ Binary Operators at the same precedence level are grouped in the order given by 
 | [`==`][expr.cmp] [`!=`][expr.cmp] [`<`][expr.cmp] [`>`][expr.cmp] [`<=`][expr.cmp] [`>=`][expr.cmp] | Require parentheses |
 | [`&&`][expr.bool-logic]     | left to right       |
 | [<code>&#124;&#124;</code>][expr.bool-logic] | left to right       |
-| [`..`][expr.range] [`..=`][expr.range] | Require parentheses |
 | [`=`][expr.assign] [`+=`][expr.compound-assign] [`-=`][expr.compound-assign] [`*=`][expr.compound-assign] [`/=`][expr.compound-assign] [`%=`][expr.compound-assign] <br> [`&=`][expr.compound-assign] [<code>&#124;=</code>][expr.compound-assign] [`^=`][expr.compound-assign] [`<<=`][expr.compound-assign] [`>>=`][expr.compound-assign] | right to left |
-| [`return`][expr.return] [`break`][expr.loop.break] [closures][expr.closure]  | |
+| [`return`][expr.return] [`break`][expr.loop.break]  | |
 
 r[expr.operand-order]
 ## Evaluation order of operands
@@ -104,23 +88,18 @@ The following list of expressions all evaluate their operands the same way, as d
 Other expressions either don't take operands or evaluate them conditionally as described on their respective pages.
 
 * Dereference expression
-* Error propagation expression
 * Negation expression
 * Arithmetic and logical binary operators
 * Comparison operators
 * Type cast expression
 * Grouped expression
 * Array expression
-* Await expression
 * Index expression
-* Tuple expression
-* Tuple index expression
 * Struct expression
 * Call expression
 * Method call expression
 * Field expression
 * Break expression
-* Range expression
 * Return expression
 
 r[expr.operand-order.operands-before-primary]
@@ -159,7 +138,7 @@ r[expr.place-value.place-memory-location]
 A *place expression* is an expression that represents a memory location.
 
 r[expr.place-value.place-expr-kinds]
-These expressions are [paths] which refer to local variables, [static variables], [dereferences][deref] (`*expr`), [array indexing] expressions (`expr[expr]`), [field] references (`expr.f`) and parenthesized place expressions.
+These expressions are local variables, [static variables], [dereferences][deref] (`*expr`), [array indexing] expressions (`expr[expr]`), [field] references (`expr.f`) and parenthesized place expressions.
 
 r[expr.place-value.value-expr-kinds]
 All other expressions are value expressions.
@@ -189,9 +168,7 @@ Explicitly, the assignee expressions are:
 
 - Place expressions.
 - [Underscores].
-- [Tuples] of assignee expressions.
 - [Slices][expr.array.index] of assignee expressions.
-- [Tuple structs] of assignee expressions.
 - [Structs] of assignee expressions (with optionally named
   fields).
 - [Unit structs]
@@ -285,28 +262,6 @@ Implicit borrows may be taken in the following expressions:
 * Operand of the [dereference operator][deref] (`*`).
 * Operands of [comparison].
 * Left operands of the [compound assignment].
-
-r[expr.overload]
-## Overloading Traits
-
-Many of the following operators and expressions can also be overloaded for other types using traits in `std::ops` or `std::cmp`.
-These traits also exist in `core::ops` and `core::cmp` with the same names.
-
-r[expr.attr]
-## Expression Attributes
-
-r[expr.attr.restriction]
-[Outer attributes] before an expression are allowed only in a few specific cases:
-
-* Before an expression used as a [statement].
-* Elements of [array expressions], [tuple expressions], [call expressions], and tuple-style [struct] expressions.
-* The tail expression of [block expressions].
-<!-- Keep list in sync with block-expr.md -->
-
-r[expr.attr.never-before]
-They are never allowed before:
-* [Range] expressions.
-* Binary operator expressions ([ArithmeticOrLogicalExpression], [ComparisonExpression], [LazyBooleanExpression], [TypeCastExpression], [AssignmentExpression], [CompoundAssignmentExpression]).
 
 [`Copy`]:               special-types-and-traits.md#copy
 [`Drop`]:               special-types-and-traits.md#drop
