@@ -5,7 +5,6 @@ r[expr.path.syntax]
 ```grammar,expressions
 PathExpression ->
       PathInExpression
-    | QualifiedPathInExpression
 ```
 
 r[expr.path.intro]

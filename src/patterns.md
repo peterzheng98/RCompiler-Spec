@@ -3,7 +3,7 @@ r[patterns]
 
 r[patterns.syntax]
 ```grammar,patterns
-Pattern -> `|`? PatternNoTopAlt  ( `|` PatternNoTopAlt )*
+Pattern -> PatternNoTopAlt
 
 PatternNoTopAlt ->
       PatternWithoutRange
@@ -12,15 +12,9 @@ PatternWithoutRange ->
       LiteralPattern
     | IdentifierPattern
     | WildcardPattern
-    | RestPattern
     | ReferencePattern
-    | StructPattern
     | TupleStructPattern
-    | TuplePattern
-    | GroupedPattern
-    | SlicePattern
     | PathPattern
-    | MacroInvocation
 ```
 
 r[patterns.intro]
@@ -69,7 +63,7 @@ r[patterns.let]
 * [`let` declarations](statements.md#let-statements)
 
 r[patterns.param]
-* [Function](items/functions.md) and [closure](expressions/closure-expr.md) parameters
+* [Function](items/functions.md) parameters
 
 r[patterns.match]
 * [`match` expressions](expressions/match-expr.md)
@@ -79,9 +73,6 @@ r[patterns.if-let]
 
 r[patterns.while-let]
 * [`while let` expressions](expressions/loop-expr.md#while-let-patterns)
-
-r[patterns.for]
-* [`for` expressions](expressions/loop-expr.md#iterator-loops)
 
 r[patterns.destructure]
 ## Destructuring
@@ -394,7 +385,7 @@ if let Some(_) = x {}
 r[patterns.wildcard.refutable]
 The wildcard pattern is always irrefutable.
 
-r[patterns.rest]
+<!-- r[patterns.rest]
 ## Rest patterns
 
 r[patterns.rest.syntax]
@@ -450,7 +441,7 @@ match tuple {
     (.., 5) => println!("tail must be 5"),
     (..) => println!("matches everything else"),
 }
-```
+``` -->
 
 r[patterns.ref]
 ## Reference patterns
@@ -482,7 +473,7 @@ Adding the `mut` keyword dereferences a mutable reference. The mutability must m
 
 r[patterns.ref.refutable]
 Reference patterns are always irrefutable.
-
+<!-- 
 r[patterns.struct]
 ## Struct patterns
 
@@ -600,6 +591,7 @@ A struct pattern is refutable if the [PathInExpression] resolves to a constructo
 
 r[patterns.struct.namespace]
 A struct pattern matches against the struct, union, or enum variant whose constructor is resolved from [PathInExpression] in the [type namespace]. See [patterns.tuple-struct.namespace] for more details.
+-->
 
 r[patterns.tuple-struct]
 ## Tuple struct patterns
@@ -612,8 +604,9 @@ TupleStructItems -> Pattern ( `,` Pattern )* `,`?
 ```
 
 r[patterns.tuple-struct.intro]
-Tuple struct patterns match tuple struct and enum values that match all criteria defined by its subpatterns.
-They are also used to [destructure](#destructuring) a tuple struct or enum value.
+Tuple struct patterns match enum values that match all criteria defined by its subpatterns.
+They are also used to [destructure](#destructuring) an enum value.
+In RCompiler, you should implement the tuple struct patterns for unit-like [enumeration]s, `Option<T>` and `Result<T,E>`.
 
 r[patterns.tuple-struct.refutable]
 A tuple struct pattern is refutable if the [PathInExpression] resolves to a constructor of an enum with more than one variant, or one of its subpatterns is refutable.
@@ -658,6 +651,7 @@ A tuple struct pattern matches against the tuple struct or [tuple-like enum vari
 >
 > The Lang team has made certain decisions, such as in [PR #138458], that raise questions about the desirability of using the value namespace in this way for patterns, as described in [PR #140593]. It might be prudent to not intentionally rely on this nuance in your code.
 
+<!--
 r[patterns.tuple]
 ## Tuple patterns
 
@@ -709,8 +703,9 @@ match int_reference {
     &(0..=5) => (),
     _ => (),
 }
-```
+``` -->
 
+<!-- 
 r[patterns.slice]
 ## Slice patterns
 
@@ -750,14 +745,14 @@ When matching a slice, it is irrefutable only in the form with a single `..` [re
 
 r[patterns.slice.restriction]
 Within a slice, a range pattern without both lower and upper bound must be enclosed in parentheses, as in `(a..)`, to clarify it is intended to match against a single slice element.
-A range pattern with both lower and upper bound, like `a..=b`, is not required to be enclosed in parentheses.
+A range pattern with both lower and upper bound, like `a..=b`, is not required to be enclosed in parentheses. -->
 
 r[patterns.path]
 ## Path patterns
 
 r[patterns.path.syntax]
 ```grammar,patterns
-PathPattern -> PathExpression
+PathPattern -> PathInExpression
 ```
 
 r[patterns.path.intro]
@@ -823,7 +818,7 @@ After ensuring all conditions are met, the constant value is translated into a p
 In particular, it fully participates in exhaustiveness checking.
 (For raw pointers, constants are the only way to write such patterns. Only `_` is ever considered exhaustive for these types.)
 
-r[patterns.or]
+<!-- r[patterns.or]
 ## Or-patterns
 
 _Or-patterns_ are patterns that match on one of two or more sub-patterns (for example `A | B | C`).
@@ -873,7 +868,7 @@ As shown elsewhere in this chapter, there are several types of patterns that are
 Or-patterns always have the lowest-precedence.
 This allows us to reserve syntactic space for a possible future type ascription feature and also to reduce ambiguity.
 For example, `x @ A(..) | B(..)` will result in an error that `x` is not bound in all patterns.
-`&A(x) | B(x)` will result in a type mismatch between `x` in the different subpatterns.
+`&A(x) | B(x)` will result in a type mismatch between `x` in the different subpatterns. -->
 
 [PR #138458]: https://github.com/rust-lang/rust/pull/138458
 [PR #140593]: https://github.com/rust-lang/rust/pull/140593#issuecomment-2972338457
