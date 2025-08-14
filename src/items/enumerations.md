@@ -11,6 +11,9 @@ EnumVariants -> EnumVariant ( `,` EnumVariant )* `,`?
 EnumVariant -> IDENTIFIER
 ```
 
+r[items.enum.syntax.note]
+> NOTE: Compared to Rust, this specification removes `EnumVariantTuple` (tuple-like enum variants are not supported). Only struct-like and unit-like variants are supported.
+
 r[items.enum.intro]
 An *enumeration*, also referred to as an *enum*, is a simultaneous definition of a
 nominal [enumerated type] as well as a set of *constructors*, that can be used
@@ -57,6 +60,7 @@ enum Examples {
     UnitLike,
 }
 let x = Examples::UnitLike; // Path expression of the const item.
+
 ```
 <!-- 
 r[items.enum.discriminant]
@@ -140,6 +144,7 @@ assert_eq!(0, Enum::Foo as isize);
 assert_eq!(1, Enum::Bar as isize);
 assert_eq!(2, Enum::Baz as isize);
 ``` -->
+
 
 [`C` representation]: ../type-layout.md#the-c-representation
 [call expression]: ../expressions/call-expr.md

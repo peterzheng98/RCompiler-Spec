@@ -50,10 +50,10 @@ r[ub.builtin.functions.print]
 ### print
 
 ```rust
-fn print(str: String) -> ()
+fn print(s: &str) -> ()
 ```
 
-Writes the exact bytes of `str` to `stdout` without appending a newline.
+Writes the exact bytes of `s` to `stdout` without appending a newline.
 
 ```rust
 print("Hello, world!");
@@ -63,10 +63,10 @@ r[ub.builtin.functions.println]
 ### println
 
 ```rust
-fn println(str: String) -> ()
+fn println(s: &str) -> ()
 ```
 
-Writes the exact bytes of `str` to `stdout` and then writes a single newline character.
+Writes the exact bytes of `s` to `stdout` and then writes a single newline character.
 
 ```rust
 println("Hello, world!");
@@ -109,7 +109,7 @@ Reads one line from `stdin` and returns it as a `String`. The trailing newline, 
 
 ```rust
 let name: String = getString();
-println(name);
+println(name.as_str());
 ```
 
 r[ub.builtin.functions.getInt]
@@ -175,8 +175,8 @@ let x: u32 = 10;
 let sx: String = x.to_string();
 let y: usize = 42;
 let sy: String = y.to_string();
-println(sx);
-println(sy);
+println(sx.as_str());
+println(sy.as_str());
 ```
 
 r[ub.builtin.methods.as_str]

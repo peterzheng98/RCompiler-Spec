@@ -17,6 +17,9 @@ PatternWithoutRange ->
     | PathPattern
 ```
 
+r[patterns.syntax.note]
+> NOTE: Compared to Rust, this specification removes `TupleStructPattern` (tuple struct patterns are not supported). Tuple types themselves and their tuple patterns are still supported.
+
 r[patterns.intro]
 Patterns are used to match values against structures and to, optionally, bind variables to values inside these structures.
 They are also used in variable declarations and parameters for functions and closures.
@@ -474,6 +477,7 @@ A tuple struct pattern matches against the tuple struct or [tuple-like enum vari
 >
 > The Lang team has made certain decisions, such as in [PR #138458], that raise questions about the desirability of using the value namespace in this way for patterns, as described in [PR #140593]. It might be prudent to not intentionally rely on this nuance in your code.
 
+
 r[patterns.path]
 ## Path patterns
 
@@ -576,8 +580,8 @@ r[patterns.constraints.exhaustiveness-or-pattern]
    For some constructor `c(x, ..)` the distributive law applies such that `c(p | q, ..rest)` covers the same set of value as `c(p, ..rest) | c(q, ..rest)` does.
    This can be applied recursively until there are no more nested patterns of form `p | q` other than those that exist at the top level.
 
-   Note that by *"constructor"* we do not refer to tuple struct patterns, but rather we refer to a pattern for any product type.
-   This includes enum variants, tuple structs, structs with named fields, arrays, tuples, and slices.
+   Note that by *"constructor"* we refer to a pattern for any product type.
+   This includes enum variants, structs with named fields, arrays, tuples, and slices.
 
 r[patterns.behavior]
 ### Dynamic semantics
