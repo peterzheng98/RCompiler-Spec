@@ -16,17 +16,14 @@ BLOCK_COMMENT_CONTENT ->
     | `/` ~`*`
 ```
 
-r[comments.normal]
-## (Non-doc) comments
-
 Comments follow the general C++ style of line (`//`) and
 block (`/* ... */`) comment forms. Nested block comments are supported.
 
 r[comments.normal.tokenization]
-(Non-doc) comments are interpreted as a form of whitespace.
+Comments are interpreted as a form of whitespace.
 
 r[comments.normal.examples]
-### (Non-doc) comments examples
+### Examples
 
 ```rust
 // This is a valid line comment
@@ -44,13 +41,15 @@ r[comments.normal.examples]
 /*   - A comment */
 /*** - A comment */
 
-pub mod nested_comments {
-    /* we can /* nest /* deeply */ nested */ comments */
-    
-    // empty line comment
-    //
-    
-    // empty block comment
-    /**/
-}
+/* we can /* nest /* deeply */ nested */ comments */
+
+// empty line comment
+//
+
+// empty block comment
+/**/
+
+/* /* You should strictly match /* and */ of the nested block comment. */
+fn main(){} // this is a comment not a code piece
+*/
 ```

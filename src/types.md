@@ -72,15 +72,14 @@ r[type.recursive]
 ## Recursive types
 
 r[type.recursive.intro]
-Nominal types &mdash; [structs] and [enumerations] &mdash; may be
-recursive. That is, each `enum` variant or `struct` field may
-refer, directly or indirectly, to the enclosing `enum` or `struct` type itself.
+Nominal types &mdash; [structs] &mdash; may be
+recursive. That is, each `struct` field may
+refer, directly or indirectly, to the enclosing `struct` type itself.
 
 r[type.recursive.constraint]
 Such recursion has restrictions:
 
-* Recursive types must include a nominal type in the recursion (not mere [type
-  aliases], or other structural types such as [arrays] or [tuples]). So `type
+* Recursive types must include a nominal type in the recursion (not other structural types such as [arrays]). So `type
   Rec = &'static [Rec]` is not allowed.
 * The size of a recursive type must be finite; in other words the recursive
   fields of the type must be [pointer types].
@@ -88,12 +87,28 @@ Such recursion has restrictions:
 An example of a *recursive* type and its use:
 
 ```rust
-enum List<T> {
-    Nil,
-    Cons(T, Box<List<T>>)
+struct List {
+    data: usize,
+    // A struct can reference itself (as long as it is not 
+    // infinitely recursive).
+    next: Option<Box<Self>>,
 }
 
-let a: List<i32> = List::Cons(7, Box::new(List::Cons(13, Box::new(List::Nil))));
+impl List {
+    fn new(data: usize) -> Self {
+        List {
+            data,
+            next: None,
+        }
+    }
+
+    fn append(&mut self, value: usize) {
+        match &mut self.next {
+            Some(next) => next.append(value),
+            None => self.next = Some(Box::new(Self::new(value))),
+        }
+    }
+}
 ```
 
 [Array]: types/array.md
