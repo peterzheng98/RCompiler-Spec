@@ -4,7 +4,7 @@ r[items.traits]
 r[items.traits.syntax]
 ```grammar,items
 Trait ->
-    `trait` IDENTIFIER ( `:` TypeParamBounds? )? 
+    `trait` IDENTIFIER
     `{`
         AssociatedItem*
     `}`

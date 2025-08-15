@@ -11,21 +11,20 @@ r[names.scopes.items]
 ## Item scopes
 
 r[names.scopes.items.module]
-The name of an [item][items] declared directly in a [module] has a scope that extends from the start of the module to the end of the module. These items are also members of the module and can be referred to with a [path] leading from their module.
+The name of an [item][items] declared directly in a module has a scope that **extends from the start of the module to the end of the module**. These items are also members of the module and can be referred to with a [path] leading from their module.
 
 r[names.scopes.items.statement]
-The name of an item declared as a [statement] has a scope that extends from the start of the block the item statement is in until the end of the block.
+The name of an item declared as a [statement] has a scope that **extends from the start of the block the item statement is in until the end of the block**.
 
 r[names.scopes.items.duplicate]
 It is an error to introduce an item with a duplicate name of another item in the same [namespace] within the same module or block.
-[Asterisk glob imports] have special behavior for dealing with duplicate names and shadowing, see the linked chapter for more details.
 
 r[names.scopes.items.shadow-prelude]
 Items in a module may shadow items in a [prelude](#prelude-scopes).
 
-r[names.scopes.items.nested-modules]
+<!-- r[names.scopes.items.nested-modules]
 Item names from outer modules are not in scope within a nested module.
-A [path] may be used to refer to an item in another module.
+A [path] may be used to refer to an item in another module. -->
 
 r[names.scopes.associated-items]
 ### Associated item scopes
@@ -46,10 +45,6 @@ r[names.scopes.pattern-bindings.let]
 * [`let` statement] bindings range from just after the `let` statement until the end of the block where it is declared.
 r[names.scopes.pattern-bindings.parameter]
 * [Function parameter] bindings are within the body of the function.
-r[names.scopes.pattern-bindings.closure]
-* [Closure parameter] bindings are within the closure body.
-r[names.scopes.pattern-bindings.loop]
-* [`for`] bindings are within the loop body.
 r[names.scopes.pattern-bindings.let-chains]
 * [`if let`] and [`while let`] bindings are valid in the following conditions as well as the consequent block.
 r[names.scopes.pattern-bindings.match-arm]
@@ -64,8 +59,6 @@ Local variable scopes do not extend into item declarations.
 r[names.scopes.pattern-bindings.shadow]
 Pattern bindings are allowed to shadow any name in scope with the following exceptions which are an error:
 
-* [Const generic parameters]
-* [Static items]
 * [Const items]
 * Constructors for [structs] and [enums]
 

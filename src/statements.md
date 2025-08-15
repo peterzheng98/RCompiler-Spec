@@ -59,10 +59,7 @@ r[statement.let.syntax]
 ```grammar,statements
 LetStatement ->
     `let` PatternNoTopAlt ( `:` Type )?
-    (
-          `=` Expression
-        | `=` Expression _except [LazyBooleanExpression] or end with a `}`_ `else` BlockExpression
-    )? `;`
+    ( `=` Expression )? `;`
 ```
 
 r[statement.let.intro]
@@ -75,7 +72,7 @@ When no type annotation is given, the compiler will infer the type, or signal an
 r[statement.let.scope]
 Any variables introduced by a variable declaration are visible from the point of declaration until the end of the enclosing block scope, except when they are shadowed by another variable declaration.
 
-r[statement.let.constraint]
+<!-- r[statement.let.constraint]
 If an `else` block is not present, the pattern must be irrefutable.
 If an `else` block is present, the pattern may be refutable.
 
@@ -92,7 +89,8 @@ let [u, v] = [v[0], v[1]] else { // This pattern is irrefutable, so the compiler
                                  // will lint as the else block is redundant.
     panic!();
 };
-```
+``` -->
+<!-- we have no never type -->
 
 r[statement.expr]
 ## Expression statements

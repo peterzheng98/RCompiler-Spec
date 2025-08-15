@@ -3,7 +3,7 @@ r[expr.method]
 
 r[expr.method.syntax]
 ```grammar,expressions
-MethodCallExpression -> Expression `.` IDENTIFIER `(`CallParams? `)`
+MethodCallExpression -> Expression `.` PathExprSegment `(`CallParams? `)`
 ```
 
 r[expr.method.intro]

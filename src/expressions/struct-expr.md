@@ -4,7 +4,7 @@ r[expr.struct]
 r[expr.struct.syntax]
 ```grammar,expressions
 StructExpression ->
-    ( IDENTIFIER | Self ) `{` (StructExprFields | StructBase)? `}`
+    PathInExpression `{` StructExprFields? `}`
 
 StructExprFields ->
     StructExprField (`,` StructExprField)* `,`?
