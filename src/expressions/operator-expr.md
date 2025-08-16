@@ -317,6 +317,138 @@ let x = false || true; // true
 let y = false && panic!(); // false, doesn't evaluate `panic!()`
 ```
 
+
+r[expr.as]
+## Type cast expressions
+
+r[expr.as.syntax]
+```grammar,expressions
+TypeCastExpression -> Expression `as` TypeNoBounds
+```
+
+r[expr.as.intro]
+A type cast expression is denoted with the binary operator `as`.
+
+r[expr.as.result]
+Executing an `as` expression casts the value on the left-hand side to the type on the right-hand side.
+
+r[expr.as.coercions]
+`as` can be used to explicitly perform [coercions](../type-coercions.md), as well as the following additional casts.
+Any cast that does not fit either a coercion rule or an entry in the table is a compiler error.
+Here `*T` means either `*const T` or `*mut T`. `m` stands for optional `mut` in
+reference types and `mut` or `const` in pointer types.
+
+| Type of `e`           | `U`                   | Cast performed by `e as U`                            |
+|-----------------------|-----------------------|-------------------------------------------------------|
+| Integer type | Integer type | [Numeric cast][expr.as.numeric]                       |
+| `bool` or `char`      | Integer type          | [Primitive to integer cast][expr.as.bool-char-as-int] |
+<!-- | `u8`                  | `char`                | [`u8` to `char` cast][expr.as.u8-as-char]             | -->
+<!-- | Enumeration           | Integer type          | [Enum cast][expr.as.enum]                             | -->
+<!-- | `*T`                  | `*V` [^meta-compat]   | [Pointer to pointer cast][expr.as.pointer]            | -->
+<!-- | `*T` where `T: Sized` | Integer type          | [Pointer to address cast][expr.as.pointer-as-int]     | -->
+<!-- | Integer type          | `*V` where `V: Sized` | [Address to pointer cast][expr.as.int-as-pointer]     | -->
+<!-- | `&m₁ [T; n]`          | `*m₂ T` [^lessmut]    | Array to pointer cast                                 | -->
+<!-- | `*m₁ [T; n]`          | `*m₂ T` [^lessmut]    | Array to pointer cast                                 | -->
+
+<!-- [^meta-compat]: where `T` and `V` have compatible metadata:
+      * `V: Sized`, or
+      * Both slice metadata (`*[u16]` -> `*[u8]`, `*str` -> `*(u8, [u32])`), or
+      * Both the same trait object metadata, modulo dropping auto traits (`*dyn Debug` -> `*(u16, dyn Debug)`, `*dyn Debug + Send` -> `*dyn Debug`)
+          * **Note**: *adding* auto traits is only allowed if the principal trait has the auto trait as a super trait (given `trait T: Send {}`, `*dyn T` -> `*dyn T + Send` is valid, but `*dyn Debug` -> `*dyn Debug + Send` is not)
+          * **Note**: Generics (including lifetimes) must match (`*dyn T<'a, A>` -> `*dyn T<'b, B>` requires `'a = 'b` and `A = B`)
+
+[^lessmut]: only when `m₁` is `mut` or `m₂` is `const`. Casting `mut` reference/pointer to
+`const` pointer is allowed.
+
+[^no-capture]: only for closures that do not capture (close over) any local variables can be casted to function pointers. -->
+
+### Semantics
+
+r[expr.as.numeric]
+#### Numeric cast
+
+r[expr.as.numeric.int-same-size]
+* Casting between two integers of the same size (e.g. i32 -> u32) is a no-op
+  (Rust uses 2's complement for negative values of fixed integers)
+
+  ```rust
+  assert_eq!(42i32 as u32, 42u32);
+  assert_eq!(-1i32 as u32, 4294967295u32);
+  assert_eq!(4294967295u32 as i32, -1i32);
+  assert_eq!(-1isize as usize, 4294967295usize); // on 32-bit machine
+  ```
+
+r[expr.as.numeric.int-truncation]
+* Casting from a larger integer to a smaller integer (e.g. u32 -> u8) will
+  truncate
+
+  ```rust
+  assert_eq!(42u16 as u8, 42u8);
+  assert_eq!(1234u16 as u8, 210u8);
+  assert_eq!(0xabcdu16 as u8, 0xcdu8);
+
+  assert_eq!(-42i16 as i8, -42i8);
+  assert_eq!(1234u16 as i8, -46i8);
+  assert_eq!(0xabcdi32 as i8, -51i8);
+  ```
+
+r[expr.as.numeric.int-extension]
+* Casting from a smaller integer to a larger integer (e.g. u8 -> u32) will
+    * zero-extend if the source is unsigned
+    * sign-extend if the source is signed
+
+  ```rust
+  assert_eq!(42i8 as i16, 42i16);
+  assert_eq!(-17i8 as i16, -17i16);
+  assert_eq!(0b1000_1010u8 as u16, 0b0000_0000_1000_1010u16, "Zero-extend");
+  assert_eq!(0b0000_1010i8 as i16, 0b0000_0000_0000_1010i16, "Sign-extend 0");
+  assert_eq!(0b1000_1010u8 as i8 as i16, 0b1111_1111_1000_1010u16 as i16, "Sign-extend 1");
+  ```
+
+<!-- r[expr.as.enum]
+#### Enum cast
+
+r[expr.as.enum.discriminant]
+Casts an enum to its discriminant, then uses a numeric cast if needed.
+Casting is limited to the following kinds of enumerations:
+
+* [Unit-only enums]
+* [Field-less enums] without [explicit discriminants], or where only unit-variants have explicit discriminants
+
+```rust
+enum Enum { A, B, C }
+assert_eq!(Enum::A as i32, 0);
+assert_eq!(Enum::B as i32, 1);
+assert_eq!(Enum::C as i32, 2);
+```
+
+r[expr.as.enum.no-drop]
+Casting is not allowed if the enum implements [`Drop`]. -->
+
+r[expr.as.bool-char-as-int]
+#### Primitive to integer cast
+
+* `false` casts to `0`, `true` casts to `1`
+* `char` casts to the value of the code point, then uses a numeric cast if needed.
+
+```rust
+assert_eq!(false as i32, 0);
+assert_eq!(true as i32, 1);
+assert_eq!('A' as i32, 65);
+// assert_eq!('Ö' as i32, 214);
+```
+
+<!-- r[expr.as.u8-as-char]
+#### `u8` to `char` cast
+
+Casts to the `char` with the corresponding code point.
+
+```rust
+assert_eq!(65u8 as char, 'A');
+assert_eq!(214u8 as char, 'Ö');
+``` -->
+
+r[expr.assign]
 ## Assignment expressions
 
 r[expr.assign.syntax]
@@ -344,7 +476,7 @@ Evaluating assignment expressions begins by evaluating its operands.
 The assigned value operand is evaluated first, followed by the assignee expression.
 
 r[expr.assign.destructuring-order]
-For destructuring assignment, subexpressions of the assignee expression are evaluated left-to-right.
+For **destructuring** assignment, subexpressions of the assignee expression are evaluated left-to-right.
 
 > [!NOTE]
 > This is different than other expressions in that the right operand is evaluated before the left one.
@@ -356,7 +488,7 @@ r[expr.assign.behavior]
 Next it either [copies or moves] the assigned value to the assigned place.
 
 r[expr.assign.result]
-An assignment expression always produces [the unit value][unit].
+An assignment expression always produces **[the unit value][unit]** `()`, which is different from those in C or C++.
 
 Example:
 
@@ -364,6 +496,8 @@ Example:
 let mut x = 0;
 let y = 0;
 x = y;
+let mut z;
+z = x = y; // evaluate (x = y) first, and z has () type
 ```
 
 r[expr.assign.destructure]
