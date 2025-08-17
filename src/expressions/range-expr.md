@@ -25,43 +25,56 @@ RangeToInclusiveExpr -> `..=` Expression
 ```
 
 r[expr.range.behavior]
-The `..` and `..=` operators will construct an object of one of the `std::ops::Range` (or `core::ops::Range`) variants, according to the following table:
+The `..` and `..=` operators will construct an object of one of the `Range` variants, according to the following table:
 
 | Production             | Syntax        | Type                         | Range                 |
 |------------------------|---------------|------------------------------|-----------------------|
-| [RangeExpr]            | start`..`end  | [std::ops::Range]            | start &le; x &lt; end |
-| [RangeFromExpr]        | start`..`     | [std::ops::RangeFrom]        | start &le; x          |
-| [RangeToExpr]          | `..`end       | [std::ops::RangeTo]          |            x &lt; end |
-| [RangeFullExpr]        | `..`          | [std::ops::RangeFull]        |            -          |
-| [RangeInclusiveExpr]   | start`..=`end | [std::ops::RangeInclusive]   | start &le; x &le; end |
-| [RangeToInclusiveExpr] | `..=`end      | [std::ops::RangeToInclusive] |            x &le; end |
+| [RangeExpr]            | start`..`end  | [Range]            | start &le; x &lt; end |
+| [RangeFromExpr]        | start`..`     | [RangeFrom]        | start &le; x          |
+| [RangeToExpr]          | `..`end       | [RangeTo]          |            x &lt; end |
+| [RangeFullExpr]        | `..`          | [RangeFull]        |            -          |
+| [RangeInclusiveExpr]   | start`..=`end | [RangeInclusive]   | start &le; x &le; end |
+| [RangeToInclusiveExpr] | `..=`end      | [RangeToInclusive] |            x &le; end |
 
+where the builtin type `Range` is defined as:
+
+```rust
+struct Range {
+    /// The lower bound of the range (inclusive).
+    start: usize,
+    /// The upper bound of the range (exclusive).
+    end: usize,
+}
+```
+<!-- 
 Examples:
 
 ```rust
-1..2;   // std::ops::Range
-3..;    // std::ops::RangeFrom
-..4;    // std::ops::RangeTo
-..;     // std::ops::RangeFull
-5..=6;  // std::ops::RangeInclusive
-..=7;   // std::ops::RangeToInclusive
-```
+1..2;   // Range
+3..;    // RangeFrom
+..4;    // RangeTo
+..;     // RangeFull
+5..=6;  // RangeInclusive
+..=7;   // RangeToInclusive
+``` -->
 
 r[expr.range.equivalence]
 The following expressions are equivalent.
 
 ```rust
-let x = std::ops::Range {start: 0, end: 10};
+let x = Range {start: 0, end: 10};
 let y = 0..10;
 
 assert_eq!(x, y);
 ```
 
-r[expr.range.for]
-Ranges can be used in `for` loops:
+r[expr.range.slice]
+Range expressions are used to index slices, arrays and strings.
 
 ```rust
-for i in 1..11 {
-    println!("{}", i);
-}
+let a: [i32; 5] = [1, 2, 3, 4, 5];
+let b: &[i32] = &a[1..4];
+let s = "19260817";
+let f: &str = &s[b[2] as usize..];
+println(f); // 0817
 ```

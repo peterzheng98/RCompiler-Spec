@@ -45,6 +45,7 @@
         - [Method call expressions](expressions/method-call-expr.md)
         - [Field access expressions](expressions/field-expr.md)
         - [Loop expressions](expressions/loop-expr.md)
+        - [Range expressions](expressions/range-expr.md)
         - [If expressions](expressions/if-expr.md)
         - [Match expressions](expressions/match-expr.md)
         - [Return expressions](expressions/return-expr.md)
