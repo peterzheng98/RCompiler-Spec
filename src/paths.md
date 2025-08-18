@@ -119,9 +119,12 @@ In a method body, a path which consists of a single `self` segment resolves to t
 ```rust
 struct S {
     b: bool,
-};
+}
 impl S {
-    fn baz(self) -> bool {
+    fn foo(&self){}
+    fn baz(&self) -> bool {
+        self.foo(); 
+        // in rust, you may use `self::foo()`, but it is not supported in this specification
         self.b
     }
 }
@@ -159,7 +162,6 @@ trait T {
     const C: i32;
     // `Self` will be whatever type that implements `T`.
     fn new() -> Self;
-    // `Self::Item` will be the type alias in the implementation.
     fn f(&self) -> i32;
 }
 struct S;
@@ -172,11 +174,14 @@ impl T for S {
         Self::C                  // `Self::C` is the constant value `9`.
     }
 }
-    
+```
+
+r[paths.qualifiers.type-self.recursive]
+A struct can reference itself, as long as it is not infinitely recursive.
+
+```rust
 struct NonEmptyList {
     head: usize,
-    // A struct can reference itself (as long as it is not 
-    // infinitely recursive).
     tail: Option<Box<Self>>,
 }
 
