@@ -18,4 +18,7 @@ r[ub.type-system.numeric-types]
 r[ub.type-system.inferred-type]
 ## Inferred type
 
-Inferred type is required. It is promised that all the inferred types in the test suite can be determined uniquely during compilation.
+Inferred type is not required. 
+<!-- It is promised that all the inferred types in the test suite can be determined uniquely during compilation. -->
+
+Furthermore, there is no place where type inference is needed.

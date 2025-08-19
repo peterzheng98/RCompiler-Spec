@@ -58,16 +58,17 @@ r[statement.let]
 r[statement.let.syntax]
 ```grammar,statements
 LetStatement ->
-    `let` PatternNoTopAlt ( `:` Type )?
+    `let` PatternNoTopAlt `:` Type
     ( `=` Expression )? `;`
 ```
 
 r[statement.let.intro]
 A *`let` statement* introduces a new set of [variables], given by a [pattern].
-The pattern is followed optionally by a type annotation and then either ends, or is followed by an initializer expression plus an optional `else` block.
+The pattern is followed by a type annotation and then either ends, or is followed by an initializer expression. Such type annotation should be visible from the `let` declaration.
 
 r[statement.let.inference]
-When no type annotation is given, the compiler will infer the type, or signal an error if insufficient type information is available for definite inference.
+Your compiler shall not perfoem any type inference on the type of the pattern.
+The type of the pattern must be explicitly specified by a type annotation, except underscore type.
 
 r[statement.let.scope]
 Any variables introduced by a variable declaration are visible from the point of declaration until the end of the enclosing block scope, except when they are shadowed by another variable declaration.

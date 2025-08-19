@@ -62,7 +62,6 @@
         - [Struct types](types/struct.md)
         - [Enumerated types](types/enum.md)
         - [Pointer types](types/pointer.md)
-        - [Inferred type](types/inferred.md)
     - [Dynamically Sized Types](dynamically-sized-types.md)
     - [Type layout](type-layout.md)
     - [Interior mutability](interior-mutability.md)

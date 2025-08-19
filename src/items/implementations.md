@@ -29,13 +29,11 @@ There are two types of implementations:
 - inherent implementations
 - [trait] implementations
 
+r[items.impl.trait.foreign-types]
+The implementing type is either a [struct] or an [enumeration] defined in the [type namespace](../names/namespaces.md#r-names.namespaces.kinds) that is visible to the `impl` item.
+
 r[items.impl.inherent]
 ## Inherent Implementations
-
-r[items.impl.inherent.intro]
-An inherent implementation is defined as the sequence of the `impl` keyword,
-generic type declarations, a path to a nominal type, a where clause, and a
-bracketed set of associable items.
 
 r[items.impl.inherent.implementing-type]
 The nominal type is called the _implementing type_ and the associable items are
@@ -92,13 +90,6 @@ fn main() {
 r[items.impl.trait]
 ## Trait Implementations
 
-r[items.impl.trait.intro]
-A _trait implementation_ is defined like an inherent implementation except that
-the optional generic type declarations are followed by a [trait], followed
-by the keyword `for`, followed by a path to a nominal type.
-
-<!-- To understand this, you have to back-reference to the previous section. :( -->
-
 r[items.impl.trait.implemented-trait]
 The trait is known as the _implemented trait_. The implementing type
 implements the implemented trait.
@@ -149,43 +140,10 @@ r[items.impl.trait.coherence]
 ### Trait Implementation Coherence
 
 r[items.impl.trait.coherence.intro]
-A trait implementation is considered incoherent if either the orphan rules check fails
-or there are overlapping implementation instances.
+A trait implementation is considered incoherent if either the type is foreign
+or there are overlapping implementation instances (i.e. the same trait implemented for the same type),
+and such incoherency should not be allowed by your compiler. 
 
-r[items.impl.trait.coherence.overlapping]
-Two trait implementations overlap when there is a non-empty intersection of the
-traits the implementation is for, the implementations can be instantiated with
-the same type. <!-- This is probably wrong? Source: No two implementations can
-be instantiable with the same set of types for the input type parameters. -->
-
-r[items.impl.trait.orphan-rule]
-#### Orphan rules
-
-r[items.impl.trait.orphan-rule.intro]
-The *orphan rule* states that a trait implementation is only allowed if either the trait or at least one of the types in the implementation is defined in the current crate. It prevents conflicting trait implementations across different crates and is key to ensuring coherence.
-
-An orphan implementation is one that implements a foreign trait for a foreign type. If these were freely allowed, two crates could implement the same trait for the same type in incompatible ways, creating a situation where adding or updating a dependency could break compilation due to conflicting implementations.
-
-The orphan rule enables library authors to add new implementations to their traits without fear that they'll break downstream code. Without these restrictions, a library couldn't add an implementation like `impl<T: Display> MyTrait for T` without potentially conflicting with downstream implementations.
-
-r[items.impl.trait.orphan-rule.general]
-Given `impl<P1..=Pn> Trait<T1..=Tn> for T0`, an `impl` is valid only if at
-least one of the following is true:
-
-- `Trait` is a [local trait]
-- All of
-  - At least one of the types `T0..=Tn` must be a [local type]. Let `Ti` be the
-    first such type.
-  - No [uncovered type] parameters `P1..=Pn` may appear in `T0..Ti` (excluding
-    `Ti`)
-
-r[items.impl.trait.uncovered-param]
-Only the appearance of *uncovered* type parameters is restricted.
-
-r[items.impl.trait.fundamental]
-Note that for the purposes of coherence, [fundamental types] are
-special. The `T` in `Box<T>` is not considered covered, and `Box<LocalType>`
-is considered local.
 
 [trait]: traits.md
 [associated constants]: associated-items.md#associated-constants
