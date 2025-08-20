@@ -46,7 +46,6 @@
         - [Field access expressions](expressions/field-expr.md)
         - [Loop expressions](expressions/loop-expr.md)
         - [If expressions](expressions/if-expr.md)
-        - [Match expressions](expressions/match-expr.md)
         - [Return expressions](expressions/return-expr.md)
         - [Underscore expressions](expressions/underscore-expr.md)
 
@@ -58,7 +57,6 @@
         - [Numeric types](types/numeric.md)
         - [Textual types](types/textual.md)
         - [Array types](types/array.md)
-        - [Slice types](types/slice.md)
         - [Struct types](types/struct.md)
         - [Enumerated types](types/enum.md)
         - [Pointer types](types/pointer.md)

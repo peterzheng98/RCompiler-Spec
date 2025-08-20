@@ -2,7 +2,7 @@ r[ub.expressions]
 # Undefined behavior list (Expressions)
 
 r[ub.expressions.literals]
-## Literal Expressions
+## Literal expressions
 
 r[ub.expressions.literals.char-and-string]
 ### Character and string literal expressions

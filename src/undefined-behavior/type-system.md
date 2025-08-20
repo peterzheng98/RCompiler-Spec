@@ -22,3 +22,13 @@ Inferred type is not required.
 <!-- It is promised that all the inferred types in the test suite can be determined uniquely during compilation. -->
 
 Furthermore, there is no place where type inference is needed.
+
+r[ub.type-system.unit-type]
+## Unit type
+
+Any expressions, items and patterns about tuple have been declared as undefined behaviors, but unit type `()` is still required.
+
+r[ub.type-system.slice-type]
+## Slice types
+
+Slice types are not defined.

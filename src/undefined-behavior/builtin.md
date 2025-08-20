@@ -15,17 +15,19 @@ Only the following three special types are defined, and other special types like
 r[ub.builtin.types-and-traits.types.box]
 #### Box<T>
 
-It remains to be considered.
+`Box<T>` is not defined, so this language does not support heap allocation.
 
 r[ub.builtin.types-and-traits.types.option]
 #### Option<T>
 
-It remains to be considered.
+`Option<T>` is not defined, so several corresponding features are also not defined, which are listed below:
+- `if let` and `while let` patterns;
+- `match` expressions;
 
 r[ub.builtin.types-and-traits.types.result]
 #### Result<T, E>
 
-It remains to be considered.
+`Result<T, E>` is not defined.
 
 r[ub.builtin.types-and-traits.traits]
 #### Special traits and auto traits
