@@ -233,14 +233,14 @@ Some examples:
 let local_var = PrintOnDrop("local var");
 
 // Dropped once the condition has been evaluated
-if PrintOnDrop("If condition").0 == "If condition" {
+if (PrintOnDrop("If condition").0 == "If condition") {
     // Dropped at the end of the block
     PrintOnDrop("If body").0
 } else {
     unreachable!()
 };
 
-if let "if let scrutinee" = PrintOnDrop("if let scrutinee").0 {
+if (let "if let scrutinee" = PrintOnDrop("if let scrutinee").0) {
     PrintOnDrop("if let consequent").0
     // `if let consequent` dropped here
 }
@@ -250,7 +250,7 @@ else {
     // `if let else` dropped here
 };
 
-while let x = PrintOnDrop("while let scrutinee").0 {
+while (let x = PrintOnDrop("while let scrutinee").0) {
     PrintOnDrop("while let loop body").0;
     break;
     // `while let loop body` dropped here.

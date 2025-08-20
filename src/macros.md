@@ -75,7 +75,7 @@ macro_rules! pat {
     ($i:ident) => (Some($i))
 }
 
-if let pat!(x) = Some(1) {
+if (let pat!(x) = Some(1)) {
     assert_eq!(x, 1);
 }
 

@@ -267,9 +267,9 @@ r[coerce.least-upper-bound.computation-unify]
 ```rust
 # let (a, b, c) = (0, 1, 2);
 // For if branches
-let bar = if true {
+let bar = if (true) {
     a
-} else if false {
+} else if (false) {
     b
 } else {
     c
@@ -287,9 +287,9 @@ let bax = [a, b, c];
 
 // For closure with multiple return statements
 let clo = || {
-    if true {
+    if (true) {
         a
-    } else if false {
+    } else if (false) {
         b
     } else {
         c

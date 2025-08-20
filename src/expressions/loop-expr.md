@@ -53,8 +53,9 @@ r[expr.loop.while.intro]
 A `while` loop expression allows repeating the evaluation of a block while a set of conditions remain true.
 
 r[expr.loop.while.syntax]
-The syntax of a `while` expression is a sequence of one or more condition operands separated by `&&`,
+The syntax of a `while` expression is a condition expression enclosed in parentheses,
 followed by a [BlockExpression].
+Within the parentheses, condition operands can be separated by `&&` to form chains.
 
 r[expr.loop.while.condition]
 Condition operands must be either an [Expression] with a [boolean type] or a conditional `let` match.
@@ -76,7 +77,7 @@ An example:
 ```rust
 let mut i = 0;
 
-while i < 10 {
+while (i < 10) {
     println!("hello");
     i = i + 1;
 }
@@ -92,11 +93,11 @@ The following examples illustrate bindings using `let` patterns:
 ```rust
 let mut x = vec![1, 2, 3];
 
-while let Some(y) = x.pop() {
+while (let Some(y) = x.pop()) {
     println!("y = {}", y);
 }
 
-while let _ = 5 {
+while (let _ = 5) {
     println!("Irrefutable patterns are always true");
     break;
 }
@@ -107,7 +108,7 @@ A `while let` loop is equivalent to a `loop` expression containing a [`match` ex
 
 <!-- ignore: expansion example -->
 ```rust,ignore
-'label: while let PATS = EXPR {
+'label: while (let PATS = EXPR) {
     /* loop body */
 }
 ```
@@ -130,7 +131,7 @@ This has the same semantics as with `|` in `match` expressions:
 
 ```rust
 let mut vals = vec![2, 3, 1, 2, 2];
-while let Some(v @ 1) | Some(v @ 2) = vals.pop() {
+while (let Some(v @ 1) | Some(v @ 2) = vals.pop()) {
     // Prints 2, 2, then 1
     println!("{}", v);
 }
@@ -149,9 +150,9 @@ The following is an example of chaining multiple expressions, mixing `let` bindi
 fn main() {
     let outer_opt = Some(Some(1i32));
 
-    while let Some(inner_opt) = outer_opt
+    while (let Some(inner_opt) = outer_opt
         && let Some(number) = inner_opt
-        && number == 1
+        && number == 1)
     {
         println!("Peek a boo");
         break;
@@ -173,8 +174,8 @@ When `break` is encountered, execution of the associated loop body is immediatel
 ```rust
 let mut last = 0;
 let mut x = 1;
-while x < 100 {
-    if x > 12 {
+while (x < 100) {
+    if (x > 12) {
         break;
     }
     last = x;
@@ -219,7 +220,7 @@ For example:
 ```rust
 let (mut a, mut b) = (1, 1);
 let result = loop {
-    if b > 10 {
+    if (b > 10) {
         break b;
     }
     let c = a + b;

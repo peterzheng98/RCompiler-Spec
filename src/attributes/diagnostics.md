@@ -444,7 +444,7 @@ When used on a function in a trait implementation, the attribute does nothing.
 > (five(),);
 > Some(five());
 > { five() };
-> if true { five() } else { 0i32 };
+> if (true) { five() } else { 0i32 };
 > match true {
 >     _ => five()
 > };

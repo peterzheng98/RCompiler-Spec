@@ -453,9 +453,9 @@ it is false.
 For example:
 
 ```rust
-let machine_kind = if cfg!(unix) {
+let machine_kind = if (cfg!(unix)) {
   "unix"
-} else if cfg!(windows) {
+} else if (cfg!(windows)) {
   "windows"
 } else {
   "unknown"

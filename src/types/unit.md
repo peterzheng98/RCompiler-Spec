@@ -27,7 +27,7 @@ fn main() -> () {
   let mut x = 5;    
   let y: () = x = 8;
   let z: ();
-  z = while x < 10 {
+  z = while (x < 10) {
       x += 1;
       printlnInt(x); // 9\n10\n
   };

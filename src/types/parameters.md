@@ -6,7 +6,7 @@ its type parameters are types:
 
 ```rust
 fn to_vec<A: Clone>(xs: &[A]) -> Vec<A> {
-    if xs.is_empty() {
+    if (xs.is_empty()) {
         return vec![];
     }
     let first: A = xs[0].clone();

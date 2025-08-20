@@ -36,7 +36,7 @@ fn initialization_example() {
     let init_after_if: ();
     let uninit_after_if: ();
 
-    if random_bool() {
+    if (random_bool()) {
         init_after_if = ();
         uninit_after_if = ();
     } else {

@@ -118,7 +118,7 @@ The type of [ExpressionWithBlock] expressions when used as statements must be th
 ```rust
 # let mut v = vec![1, 2, 3];
 v.pop();          // Ignore the element returned from pop
-if v.is_empty() {
+if (v.is_empty()) {
     v.push(5);
 } else {
     v.remove(0);

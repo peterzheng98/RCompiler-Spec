@@ -274,7 +274,7 @@ Here is this algorithm described in pseudocode.
 /// following address will be aligned to `alignment`.
 fn padding_needed_for(offset: usize, alignment: usize) -> usize {
     let misalignment = offset % alignment;
-    if misalignment > 0 {
+    if (misalignment > 0) {
         // round up to next multiple of `alignment`
         alignment - misalignment
     } else {

@@ -46,13 +46,13 @@ The pattern in the following example does four things:
 #     computer: None,
 #     age: 15,
 # };
-if let
+if (let
     Person {
         car: Some(_),
         age: person_age @ 13..=19,
         name: ref person_name,
         ..
-    } = person
+    } = person)
 {
     println!("{} has a car and is {} years old.", person_name, person_age);
 }
@@ -110,9 +110,9 @@ Examples:
 ```rust
 let (x, y) = (1, 2);               // "(x, y)" is an irrefutable pattern
 
-if let (a, 3) = (1, 2) {           // "(a, 3)" is refutable, and will not match
+if (let (a, 3) = (1, 2)) {           // "(a, 3)" is refutable, and will not match
     panic!("Shouldn't reach here");
-} else if let (a, 4) = (3, 4) {    // "(a, 4)" is refutable, and will match
+} else if (let (a, 4) = (3, 4)) {    // "(a, 4)" is refutable, and will match
     println!("Matched ({}, 4)", a);
 }
 ```
@@ -219,7 +219,7 @@ For example, the following is not valid:
 #    age: u8,
 # }
 # let value = Person { name: String::from("John"), age: 23 };
-if let Person { name: &person_name, age: 18..=150 } = value { }
+if (let Person { name: &person_name, age: 18..=150 } = value) { }
 ```
 
 To make it valid, write the following:
@@ -230,7 +230,7 @@ To make it valid, write the following:
 #    age: u8,
 # }
 # let value = Person { name: String::from("John"), age: 23 };
-if let Person { name: ref person_name, age: 18..=150 } = value { }
+if (let Person { name: ref person_name, age: 18..=150 } = value) { }
 ```
 
 r[patterns.ident.ref-ignored]
@@ -256,7 +256,7 @@ Example:
 
 ```rust
 let x: &Option<i32> = &Some(3);
-if let Some(y) = x {
+if (let Some(y) = x) {
     // y was converted to `ref y` and its type is &i32
 }
 ```
@@ -372,7 +372,7 @@ let RGBA{r: red, g: green, b: blue, a: _} = color;
 
 // accept any Some, with any value
 # let x = Some(10);
-if let Some(_) = x {}
+if (let Some(_) = x) {}
 ```
 
 r[patterns.wildcard.refutable]

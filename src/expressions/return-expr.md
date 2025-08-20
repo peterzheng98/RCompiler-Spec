@@ -16,7 +16,7 @@ An example of a `return` expression:
 
 ```rust
 fn max(a: i32, b: i32) -> i32 {
-    if a > b {
+    if (a > b) {
         return a;
     }
     return b;

@@ -240,7 +240,7 @@ impl Struct {
 
 impl<const ID: i32> GenericStruct<ID> {
     // Definition not immediately evaluated
-    const NON_ZERO: () = if ID == 0 {
+    const NON_ZERO: () = if (ID == 0) {
         panic!("contradiction")
     };
 }

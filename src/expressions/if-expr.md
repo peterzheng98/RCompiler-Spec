@@ -8,8 +8,8 @@ IfExpression ->
     (`else` ( BlockExpression | IfExpression ) )?
 
 Conditions ->
-      Expression _except [StructExpression]_
-    | LetChain
+      `(` Expression _except [StructExpression]_ `)`
+    | `(` LetChain `)`
 
 LetChain -> LetChainCondition ( `&&` LetChainCondition )*
 
@@ -53,16 +53,16 @@ An `if` expression must have the same type in all situations.
 
 ```rust
 # let x = 3;
-if x == 4 {
+if (x == 4) {
     println!("x is four");
-} else if x == 3 {
+} else if (x == 3) {
     println!("x is three");
 } else {
     println!("x is something else");
 }
 
 // `if` can be used as an expression.
-let y = if 12 * 15 > 150 {
+let y = if (12 * 15 > 150) {
     "Bigger"
 } else {
     "Smaller"
@@ -82,7 +82,7 @@ The following examples illustrate bindings using `let` patterns:
 let dish = ("Ham", "Eggs");
 
 // This body will be skipped because the pattern is refuted.
-if let ("Bacon", b) = dish {
+if (let ("Bacon", b) = dish) {
     println!("Bacon is served with {}", b);
 } else {
     // This block is evaluated instead.
@@ -90,11 +90,11 @@ if let ("Bacon", b) = dish {
 }
 
 // This body will execute.
-if let ("Ham", b) = dish {
+if (let ("Ham", b) = dish) {
     println!("Ham is served with {}", b);
 }
 
-if let _ = 5 {
+if (let _ = 5) {
     println!("Irrefutable patterns are always true");
 }
 ```
@@ -110,7 +110,7 @@ enum E {
     Z(u8),
 }
 let v = E::Y(12);
-if let E::X(n) | E::Y(n) = v {
+if (let E::X(n) | E::Y(n) = v) {
     assert_eq!(n, 12);
 }
 ```
@@ -134,9 +134,9 @@ The following is an example of chaining multiple expressions, mixing `let` bindi
 fn single() {
     let outer_opt = Some(Some(1i32));
 
-    if let Some(inner_opt) = outer_opt
+    if (let Some(inner_opt) = outer_opt
         && let Some(number) = inner_opt
-        && number == 1
+        && number == 1)
     {
         println!("Peek a boo");
     }
@@ -149,9 +149,9 @@ The above is equivalent to the following without using chains of conditions:
 fn nested() {
     let outer_opt = Some(Some(1i32));
 
-    if let Some(inner_opt) = outer_opt {
-        if let Some(number) = inner_opt {
-            if number == 1 {
+    if (let Some(inner_opt) = outer_opt) {
+        if (let Some(number) = inner_opt) {
+            if (number == 1) {
                 println!("Peek a boo");
             }
         }
@@ -168,7 +168,7 @@ If a `||` expression is needed, then parentheses can be used. For example:
 # let condition1 = true;
 # let condition2 = false;
 // Parentheses are required here.
-if let Some(x) = foo && (condition1 || condition2) { /*...*/ }
+if (let Some(x) = foo && (condition1 || condition2)) { /*...*/ }
 ```
 
 r[expr.if.edition2024]

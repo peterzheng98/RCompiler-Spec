@@ -146,7 +146,7 @@ r[expr.block.const.not-executed]
 
 If the const block expression is not executed at runtime, it may or may not be evaluated:
 ```rust,compile_fail
-if false {
+if (false) {
     // The panic may or may not occur when the program is built.
     const { panic!(); }
 }
