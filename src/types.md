@@ -29,9 +29,8 @@ The list of types is:
     * [Enum]
 * Pointer types:
     * [References]
-<!-- * Trait types:
-    * [Trait objects]
-    * [Impl trait] -->
+* Unit type:
+    * [Unit] --- `()`
 
 r[type.name]
 ## Type expressions
@@ -46,6 +45,7 @@ TypeNoBounds ->
     | ArrayType
     | SliceType
     | InferredType
+    | UnitType
 ```
 
 r[type.name.intro]
@@ -148,3 +148,4 @@ impl List {
 [type boundaries]: trait-bounds.md
 [type parameters]: types/parameters.md
 [unions]: types/union.md
+[Unit]: types/unit.md

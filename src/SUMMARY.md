@@ -56,6 +56,7 @@
         - [Boolean type](types/boolean.md)
         - [Numeric types](types/numeric.md)
         - [Textual types](types/textual.md)
+        - [Unit type](types/unit.md)
         - [Array types](types/array.md)
         - [Struct types](types/struct.md)
         - [Enumerated types](types/enum.md)

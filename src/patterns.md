@@ -13,7 +13,6 @@ PatternWithoutRange ->
     | IdentifierPattern
     | WildcardPattern
     | ReferencePattern
-    | TupleStructPattern
     | PathPattern
 ```
 
@@ -67,15 +66,6 @@ r[patterns.let]
 
 r[patterns.param]
 * [Function](items/functions.md) parameters
-
-r[patterns.match]
-* [`match` expressions](expressions/match-expr.md)
-
-r[patterns.if-let]
-* [`if let` expressions](expressions/if-expr.md)
-
-r[patterns.while-let]
-* [`while let` expressions](expressions/loop-expr.md#while-let-patterns)
 
 r[patterns.destructure]
 ## Destructuring
@@ -418,65 +408,6 @@ Adding the `mut` keyword dereferences a mutable reference. The mutability must m
 
 r[patterns.ref.refutable]
 Reference patterns are always irrefutable.
-
-r[patterns.tuple-struct]
-## Tuple struct patterns
-
-r[patterns.tuple-struct.syntax]
-```grammar,patterns
-TupleStructPattern -> PathInExpression `(` TupleStructItems? `)`
-
-TupleStructItems -> Pattern ( `,` Pattern )* `,`?
-```
-
-r[patterns.tuple-struct.intro]
-Tuple struct patterns match enum values that match all criteria defined by its subpatterns.
-They are also used to [destructure](#destructuring) an enum value.
-In RCompiler, you should implement the tuple struct patterns for unit-like [enumeration]s, `Option<T>` and `Result<T,E>`.
-
-r[patterns.tuple-struct.refutable]
-A tuple struct pattern is refutable if the [PathInExpression] resolves to a constructor of an enum with more than one variant, or one of its subpatterns is refutable.
-
-r[patterns.tuple-struct.namespace]
-A tuple struct pattern matches against the tuple struct or [tuple-like enum variant] whose constructor is resolved from [PathInExpression] in the [value namespace].
-
-> [!NOTE]
-> Conversely, a struct pattern for a tuple struct or [tuple-like enum variant], e.g. `S { 0: _ }`, matches against the tuple struct or variant whose constructor is resolved in the [type namespace].
->
-> ```rust,no_run
-> enum E1 { V(u16) }
-> enum E2 { V(u32) }
->
-> // Import `E1::V` from the type namespace only.
-> mod _0 {
->     const V: () = (); // For namespace masking.
->     pub(super) use super::E1::*;
-> }
-> use _0::*;
->
-> // Import `E2::V` from the value namespace only.
-> mod _1 {
->     struct V {} // For namespace masking.
->     pub(super) use super::E2::*;
-> }
-> use _1::*;
->
-> fn f() {
->     // This struct pattern matches against the tuple-like
->     // enum variant whose constructor was found in the type
->     // namespace.
->     let V { 0: ..=u16::MAX } = (loop {}) else { loop {} };
->     // This tuple struct pattern matches against the tuple-like
->     // enum variant whose constructor was found in the value
->     // namespace.
->     let V(..=u32::MAX) = (loop {}) else { loop {} };
-> }
-> # // Required due to the odd behavior of `super` within functions.
-> # fn main() {}
-> ```
->
-> The Lang team has made certain decisions, such as in [PR #138458], that raise questions about the desirability of using the value namespace in this way for patterns, as described in [PR #140593]. It might be prudent to not intentionally rely on this nuance in your code.
-
 
 r[patterns.path]
 ## Path patterns

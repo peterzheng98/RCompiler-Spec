@@ -17,12 +17,8 @@ There are several different preludes:
   - [Standard library prelude](#standard-library-prelude)
     - [Types](#types)
       - [`String`](#string)
-      - [`Box<T>`](#boxt)
-      - [`Option<T>`](#optiont)
-      - [`Result<T, E>`](#resultt-e)
     - [Traits](#traits)
       - [`Copy` trait](#copy-trait)
-    - [Functions](#functions)
   - [Builtin functions](#builtin-functions)
     - [print](#print)
     - [println](#println)
@@ -46,15 +42,6 @@ r[names.prelude.types-and-traits.types]
 r[names.prelude.types-and-traits.types.String]
 #### `String`
 
-r[names.prelude.types-and-traits.types.box]
-#### `Box<T>`
-
-r[names.prelude.types-and-traits.types.option]
-#### `Option<T>`
-
-r[names.prelude.types-and-traits.types.result]
-#### `Result<T, E>`
-
 r[names.prelude.types-and-traits.traits]
 ### Traits
 
@@ -63,9 +50,6 @@ r[names.prelude.types-and-traits.traits.copy]
   - Types of integer family including `u32`, `i32` and `boolean` and the type `char` implement `Copy` trait inexplicitly, other basic types do not. Here "inexplicitly" means `Copy` trait only represents the feature of those types which implement it, but testcases will not involve it and may still involve the identifier `Copy` as that of customized types or traits.
   - Enums and tuples implement the trait if all of their fields do.
   - Since it is not defined to explicitly indicate `Copy` trait by `#[derive(Copy)]`, all customized structs do not implement `Copy` trait.
-
-### Functions
-
 
 r[names.prelude.functions]
 ## Builtin functions
