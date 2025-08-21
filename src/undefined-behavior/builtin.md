@@ -4,6 +4,9 @@ r[ub.builtin]
 r[ub.builtin.intro]
 This chapter describes the builtin functions and methods provided by the compiler. These are always in scope and do not require imports or explicit declarations.
 
+r[ub.builtin.types-and-traits]
+## Special types and traits
+
 r[ub.builtin.types-and-traits.identifiers]
 It needs to be clarify that the identifiers of those undefined special types and traits are still legal as that of customized types or traits when testcases involves them.
 
@@ -49,7 +52,7 @@ r[ub.builtin.functions.intro]
 Builtin functions operate on standard input (`stdin`) and standard output (`stdout`) unless otherwise stated.
 
 r[ub.builtin.functions.print]
-### print
+### `print`
 
 ```rust
 fn print(s: &str) -> ()
@@ -62,7 +65,7 @@ print("Hello, world!");
 ```
 
 r[ub.builtin.functions.println]
-### println
+### `println`
 
 ```rust
 fn println(s: &str) -> ()
@@ -75,7 +78,7 @@ println("Hello, world!");
 ```
 
 r[ub.builtin.functions.printInt]
-### printInt
+### `printInt`
 
 ```rust
 fn printInt(n: i32) -> ()
@@ -88,7 +91,7 @@ printInt(42);
 ```
 
 r[ub.builtin.functions.printlnInt]
-### printlnInt
+### `printlnInt`
 
 ```rust
 fn printlnInt(n: i32) -> ()
@@ -101,7 +104,7 @@ printlnInt(42);
 ```
 
 r[ub.builtin.functions.getString]
-### getString
+### `getString`
 
 ```rust
 fn getString() -> String
@@ -115,7 +118,7 @@ println(name.as_str());
 ```
 
 r[ub.builtin.functions.getInt]
-### getInt
+### `getInt`
 
 ```rust
 fn getInt() -> i32
@@ -129,7 +132,7 @@ printlnInt(a + b);
 ```
 
 r[ub.builtin.functions.exit]
-### exit
+### `exit`
 
 ```rust
 fn exit(code: i32) -> ()
@@ -162,7 +165,7 @@ r[ub.builtin.methods.intro]
 Builtin methods are provided by the compiler on specific receiver types. They are always available and require no trait imports or declarations.
 
 r[ub.builtin.methods.to_string]
-### to_string
+### `to_string`
 
 ```rust
 fn to_string(&self) -> String
@@ -182,24 +185,30 @@ println(sy.as_str());
 ```
 
 r[ub.builtin.methods.as_str]
-### as_str
+### `as_str` and `as_mut_str`
 
 ```rust
-fn as_str(&self) -> &str
+impl String {
+  fn as_str(&self) -> &str
+  fn as_mut_str(&mut self) -> &mut str
+}
 ```
 
 Available on: `String`
 
-Returns a string slice view (`&str`) of the same underlying buffer; no allocation. The returned slice is valid as long as the original `String` is valid and not mutated in a way that would reallocate.
+Returns a string slice view (`&str` for `as_str` while `&mut str` for `as_mut_str`) of the same underlying buffer; no allocation. The returned slice is valid as long as the original `String` is valid and not mutated in a way that would reallocate. Note that `as_mut_str` only accepts mutable references.
 
 ```rust
 let s: String = getString();
 let p: &str = s.as_str();
+let mut s_mut: String = getString();
+let p_mut: &mut str = s_mut.as_mut_str();
 println(p);
+println(p_mut);
 ```
 
 r[ub.builtin.methods.len]
-### len
+### `len`
 
 ```rust
 fn len(&self) -> u32
@@ -228,4 +237,24 @@ let m: u32 = sl.len();          // 3
 
 // Printing a u32 requires an explicit cast to i32 for the builtin printInt/printlnInt
 printlnInt(n as i32);
+```
+
+r[ub.builtin.string]
+## `String` in std
+
+r[ub.builtin.string.from]
+### `from`
+
+```rust
+fn from(&str) -> String
+fn from(&mut str) -> String
+```
+
+Converts a `&str` or `&mut str` into a `String`. The result is allocated on the heap.
+
+```rust
+let s: &str = "s";
+let mut string_mut: String = String::from(s);
+let s_mut: &mut str = string_mut.as_mut_str();
+let string: String = String::from(s_mut);
 ```
