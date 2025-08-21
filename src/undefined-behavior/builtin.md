@@ -44,6 +44,7 @@ r[ub.builtin.types-and-traits.traits.copy]
   - Types of integer family including `u32`, `i32` and `boolean` and the type `char` implement `Copy` trait inexplicitly, other basic types do not. Here "inexplicitly" means `Copy` trait only represents the feature of those types which implement it, but testcases will not involve it and may still involve the identifier `Copy` as that of customized types or traits.
   - Enums and tuples implement the trait if all of their fields do.
   - Since it is not defined to explicitly indicate `Copy` trait by `#[derive(Copy)]`, all customized structs do not implement `Copy` trait.
+  - For types that do not implement `Copy` trait, a simple assignment like `let n2 = n1;` neither copys nor moves the value. Instead, `n2` becomes an alias to the same memory as `n1` (same as reference in C++).
 
 r[ub.builtin.functions]
 ## Builtin functions
@@ -216,7 +217,7 @@ r[ub.builtin.methods.len]
 ### `len`
 
 ```rust
-fn len(&self) -> u32
+fn len(&self) -> usize
 ```
 
 Available on: `[T; N]`, `&[T; N]`, `&mut [T; N]`, `String`, `&str`, `&mut str`
@@ -229,26 +230,26 @@ For array references and strings, the operation is constant time.
 
 ```rust
 let a: [i32; 3] = [1, 2, 3];
-let n: u32 = a.len();           // 3
+let n: usize = a.len();           // 3
 
 let s: String = getString();
-let bytes: u32 = s.len();       // byte length of the string
+let bytes: usize = s.len();       // byte length of the string
 
 let p: &str = "hello";
-let k: u32 = p.len();           // 5
+let k: usize = p.len();           // 5
 
 let a_ref: &[i32; 3] = &a;
-let m: u32 = a_ref.len();       // 3
+let m: usize = a_ref.len();       // 3
 
 let mut a_mut: [i32; 3] = [1, 2, 3];
 let a_mut_ref: &mut [i32; 3] = &mut a_mut;
-let m_mut: u32 = a_mut_ref.len(); // 3
+let m_mut: usize = a_mut_ref.len(); // 3
 
 let mut s_mut: String = getString();
 let p_mut: &mut str = s_mut.as_mut_str();
-let k_mut: u32 = p_mut.len();  // byte length of the mutable string slice
+let k_mut: usize = p_mut.len();  // byte length of the mutable string slice
 
-// Printing a u32 requires an explicit cast to i32 for the builtin printInt/printlnInt
+// Printing a usize requires an explicit cast to i32 for the builtin printInt/printlnInt
 printlnInt(n as i32);
 ```
 

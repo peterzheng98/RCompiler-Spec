@@ -63,8 +63,6 @@
         - [Pointer types](types/pointer.md)
     - [Dynamically Sized Types](dynamically-sized-types.md)
     - [Type layout](type-layout.md)
-    - [Interior mutability](interior-mutability.md)
-    - [Destructors](destructors.md)
 
 - [Names](names.md)
     - [Namespaces](names/namespaces.md)
