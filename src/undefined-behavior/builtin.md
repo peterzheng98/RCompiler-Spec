@@ -173,15 +173,20 @@ fn to_string(&self) -> String
 
 Available on: `u32`, `usize`
 
-Returns the decimal string representation of the receiver value. Does not allocate beyond the returned `String`; does not modify the receiver.
+Returns the decimal string representation of the receiver value. Does not allocate beyond the returned `String`; does not modify the receiver. This method can be called on both immutable and mutable references.
 
 ```rust
 let x: u32 = 10;
 let sx: String = x.to_string();
 let y: usize = 42;
 let sy: String = y.to_string();
+
+let mut z: u32 = 15;
+let sz: String = z.to_string(); // works on mutable values too
+
 println(sx.as_str());
 println(sy.as_str());
+println(sz.as_str());
 ```
 
 r[ub.builtin.methods.as_str]
@@ -214,13 +219,13 @@ r[ub.builtin.methods.len]
 fn len(&self) -> u32
 ```
 
-Available on: `[T; N]`, `&[T]`, `String`, `&str`
+Available on: `[T; N]`, `&[T; N]`, `&mut [T; N]`, `String`, `&str`, `&mut str`
 
-For `String` and `&str`, returns the number of bytes of the string (not character count). For arrays `[T; N]` and slices `&[T]`, returns the number of elements. 
+For `String`, `&str`, and `&mut str`, returns the number of bytes of the string (not character count). For arrays `[T; N]` and array references `&[T; N]`, `&mut [T; N]`, returns the number of elements. 
 
 For compile-time known sizes (e.g., arrays), the call is required to have no runtime overhead. 
 
-For slices and strings, the operation is constant time.
+For array references and strings, the operation is constant time.
 
 ```rust
 let a: [i32; 3] = [1, 2, 3];
@@ -232,8 +237,16 @@ let bytes: u32 = s.len();       // byte length of the string
 let p: &str = "hello";
 let k: u32 = p.len();           // 5
 
-let sl: &[i32] = &a[..];
-let m: u32 = sl.len();          // 3
+let a_ref: &[i32; 3] = &a;
+let m: u32 = a_ref.len();       // 3
+
+let mut a_mut: [i32; 3] = [1, 2, 3];
+let a_mut_ref: &mut [i32; 3] = &mut a_mut;
+let m_mut: u32 = a_mut_ref.len(); // 3
+
+let mut s_mut: String = getString();
+let p_mut: &mut str = s_mut.as_mut_str();
+let k_mut: u32 = p_mut.len();  // byte length of the mutable string slice
 
 // Printing a u32 requires an explicit cast to i32 for the builtin printInt/printlnInt
 printlnInt(n as i32);
@@ -257,4 +270,19 @@ let s: &str = "s";
 let mut string_mut: String = String::from(s);
 let s_mut: &mut str = string_mut.as_mut_str();
 let string: String = String::from(s_mut);
+```
+
+r[ub.builtin.string.append]
+### `append`
+
+```rust
+fn append(&mut self, s: &str) -> ()
+```
+
+Appends the given string slice to the end of this `String`. This method modifies the `String` in place.
+
+```rust
+let mut string: String = String::from("Hello");
+string.append(", world!");
+println(string.as_str()); // prints "Hello, world!"
 ```

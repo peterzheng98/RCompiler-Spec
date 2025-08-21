@@ -235,6 +235,17 @@ assert_eq!(13 << 3, 104);
 assert_eq!(-10 >> 2, -3);
 ```
 
+r[expr.arith-logic.string-append]
+### String concatenation
+
+For `String` types, the `+` operator performs string concatenation by calling the `append` method. The left operand must be a mutable `String` and the right operand must be of type `&str`.
+
+```rust
+let mut s: String = String::from("Hello");
+s = s + ", world!"; // equivalent to s.append(", world!")
+println(s.as_str()); // prints "Hello, world!"
+```
+
 r[expr.cmp]
 ## Comparison Operators
 
