@@ -58,15 +58,15 @@ followed by a [BlockExpression].
 Within the parentheses, condition operands can be separated by `&&` to form chains.
 
 r[expr.loop.while.condition]
-Condition operands must be either an [Expression] with a [boolean type] or a conditional `let` match.
-If all of the condition operands evaluate to `true` and all of the `let` patterns successfully match their [scrutinee]s,
+Condition operands must be an [Expression] with a [boolean type].
+If all of the condition operands evaluate to `true`,
 then the loop body block executes.
 
 r[expr.loop.while.repeat]
 After the loop body successfully executes, the condition operands are re-evaluated to determine if the body should be executed again.
 
 r[expr.loop.while.exit]
-If any condition operand evaluates to `false` or any `let` pattern does not match its scrutinee,
+If any condition operand evaluates to `false`,
 the body is not executed and execution continues after the `while` expression.
 
 r[expr.loop.while.eval]
@@ -80,83 +80,6 @@ let mut i = 0;
 while (i < 10) {
     println!("hello");
     i = i + 1;
-}
-```
-
-r[expr.loop.while.let]
-### `while let` patterns
-
-r[expr.loop.while.let.intro]
-`let` patterns in a `while` condition allow binding new variables into scope when the pattern matches successfully.
-The following examples illustrate bindings using `let` patterns:
-
-```rust
-let mut x = vec![1, 2, 3];
-
-while (let Some(y) = x.pop()) {
-    println!("y = {}", y);
-}
-
-while (let _ = 5) {
-    println!("Irrefutable patterns are always true");
-    break;
-}
-```
-
-r[expr.loop.while.let.desugar]
-A `while let` loop is equivalent to a `loop` expression containing a [`match` expression] as follows.
-
-<!-- ignore: expansion example -->
-```rust,ignore
-'label: while (let PATS = EXPR) {
-    /* loop body */
-}
-```
-
-is equivalent to
-
-<!-- ignore: expansion example -->
-```rust,ignore
-'label: loop {
-    match EXPR {
-        PATS => { /* loop body */ },
-        _ => break,
-    }
-}
-```
-
-r[expr.loop.while.let.or-pattern]
-Multiple patterns may be specified with the `|` operator.
-This has the same semantics as with `|` in `match` expressions:
-
-```rust
-let mut vals = vec![2, 3, 1, 2, 2];
-while (let Some(v @ 1) | Some(v @ 2) = vals.pop()) {
-    // Prints 2, 2, then 1
-    println!("{}", v);
-}
-```
-
-r[expr.loop.while.chains]
-### `while` condition chains
-
-r[expr.loop.while.chains.intro]
-Multiple condition operands can be separated with `&&`.
-These have the same semantics and restrictions as [`if` condition chains].
-
-The following is an example of chaining multiple expressions, mixing `let` bindings and boolean expressions, and with expressions able to reference pattern bindings from previous expressions:
-
-```rust
-fn main() {
-    let outer_opt = Some(Some(1i32));
-
-    while (let Some(inner_opt) = outer_opt
-        && let Some(number) = inner_opt
-        && number == 1)
-    {
-        println!("Peek a boo");
-        break;
-    }
 }
 ```
 

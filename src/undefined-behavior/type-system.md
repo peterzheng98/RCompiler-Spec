@@ -6,8 +6,14 @@ r[ub.type-system.undefined-types]
 
 The following types never occur in the testcases, so neither these types themselves nor any related features of them are required to be implemented.
 
-- Function item and pointer types;
+- Never type;
+- Tuple types;
+- Function item types and function pointer types;
 - Closure types;
+- Union types;
+- Trait object types;
+- Impl trait types;
+
 
 r[ub.type-system.numeric-types]
 ## Numeric types
