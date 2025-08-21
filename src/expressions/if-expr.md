@@ -7,8 +7,7 @@ IfExpression ->
     `if` Conditions BlockExpression
     (`else` ( BlockExpression | IfExpression ) )?
 
-Conditions ->
-      `(` Expression _except [StructExpression]_ `)`
+Conditions -> `(` Expression _except [StructExpression]_ `)`
 ```
 <!-- TODO: The struct exception above needs clarification, see https://github.com/rust-lang/reference/issues/1808
      The chain grammar could use some work, see https://github.com/rust-lang/reference/issues/1811
@@ -28,6 +27,21 @@ the consequent block is executed and any subsequent `else if` or `else` block is
 r[expr.if.else-if]
 If any condition operand evaluates to `false`, 
 the consequent block is skipped and any subsequent `else if` condition is evaluated.
+
+r[expr.if.short-circuit]
+Short-circuit evaluation must be supported in `if` expressions.
+
+```rust
+fn main(){
+    let mut x: i32 = 6;
+    if (true || {
+        x += 1;
+        true
+    }) {
+        printlnInt(x); // 6
+    }
+}
+```
 
 r[expr.if.else]
 If all `if` and `else if` conditions evaluate to `false` then any `else` block is executed.

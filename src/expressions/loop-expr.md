@@ -69,6 +69,9 @@ r[expr.loop.while.exit]
 If any condition operand evaluates to `false`,
 the body is not executed and execution continues after the `while` expression.
 
+r[expr.loop.while.short-circuit]
+Short-circuit evaluation must be supported in `while` loops.
+
 r[expr.loop.while.eval]
 A `while` expression evaluates to `()`.
 
