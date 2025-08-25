@@ -43,8 +43,6 @@ TypeNoBounds ->
       TypePath
     | ReferenceType
     | ArrayType
-    | SliceType
-    | InferredType
     | UnitType
 ```
 

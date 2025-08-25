@@ -3,8 +3,6 @@ r[patterns]
 
 r[patterns.syntax]
 ```grammar,patterns
-Pattern -> PatternNoTopAlt
-
 PatternNoTopAlt ->
       PatternWithoutRange
 

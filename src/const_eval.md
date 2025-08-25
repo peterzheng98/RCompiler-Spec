@@ -81,9 +81,8 @@ r[const-eval.const-expr.builtin-arith-logic]
   operators used on integer and floating point types, `bool`, and `char`.
 
 r[const-eval.const-expr.borrows]
-* All forms of [borrow]s, including raw borrows, except borrows of expressions whose temporary scopes would be extended (see [temporary lifetime extension]) to the end of the program and which are either:
+* All forms of [borrow]s, including raw borrows, except borrows of expressions whose temporary scopes would be extended (see temporary lifetime extension) to the end of the program and which are either:
   * Mutable borrows.
-  * Shared borrows of expressions that result in values with [interior mutability].
 
   ```rust,compile_fail,E0764
   // Due to being in tail position, this borrow extends the scope of the
@@ -196,7 +195,7 @@ r[const-eval.const-expr.borrows]
   > //           Tail expression.
   > ```
   >
-  > The difference between these is that, in the first, the empty array is [promoted] but its scope does not undergo [temporary lifetime extension], so we consider the [place expression] to be transient (even though after promotion the place indeed lives to the end of the program). In the second, the scope of the empty array temporary does undergo lifetime extension, and so it is rejected due to being a mutable borrow of a lifetime-extended temporary (and therefore borrowing a non-transient place expression).
+  > The difference between these is that, in the first, the empty array is [promoted] but its scope does not undergo temporary lifetime extension, so we consider the [place expression] to be transient (even though after promotion the place indeed lives to the end of the program). In the second, the scope of the empty array temporary does undergo lifetime extension, and so it is rejected due to being a mutable borrow of a lifetime-extended temporary (and therefore borrowing a non-transient place expression).
   >
   > The effect is surprising because temporary lifetime extension, in this case, causes less code to compile than would without it.
   >

@@ -46,7 +46,7 @@ extension `.rs`.
 r[crate.module-def]
 A Rust source file describes a module, the name and location of which &mdash;
 in the module tree of the current crate &mdash; are defined from outside the
-source file: either by an explicit [Module][grammar-Module] item in a referencing
+source file: either by an explicit Module item in a referencing
 source file, or by the name of the crate itself.
 
 r[crate.items]

@@ -28,7 +28,6 @@ ExpressionWithBlock ->
       | ConstBlockExpression
       | LoopExpression
       | IfExpression
-      | MatchExpression
 ```
 
 r[expr.intro]

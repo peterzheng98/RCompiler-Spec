@@ -6,7 +6,7 @@ r[comments.syntax]
 @root LINE_COMMENT ->
       `//` ~LF*
 
-BLOCK_COMMENT ->
+@root BLOCK_COMMENT ->
       `/*` BLOCK_COMMENT_CONTENT* `*/`
 
 BLOCK_COMMENT_CONTENT ->

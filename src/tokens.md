@@ -3,7 +3,7 @@ r[lex.token]
 
 r[lex.token.syntax]
 ```grammar,lexer
-Token ->
+@root Token ->
       IDENTIFIER_OR_KEYWORD
     | CHAR_LITERAL
     | STRING_LITERAL
@@ -247,6 +247,9 @@ C_STRING_LITERAL ->
       | STRING_CONTINUE
     )* `"` 
 
+BYTE_ESCAPE ->
+      `\x` OCT_DIGIT HEX_DIGIT
+    | `\n` | `\r` | `\t` | `\\` | `\0` | `\'` | `\"`
 ```
 
 r[lex.token.str-c.intro]

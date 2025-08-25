@@ -26,18 +26,6 @@ FunctionParam -> PatternNoTopAlt `:` Type
 FunctionReturnType -> `->` Type
 ```
 
-[^async-edition]: The `async` qualifier is not allowed in the 2015 edition.
-
-[^extern-safe]: The `safe` function qualifier is only allowed semantically within
-  `extern` blocks.
-
-[^extern-qualifiers]: *Relevant to editions earlier than Rust 2024*: Within
-  `extern` blocks, the `safe` or `unsafe` function qualifier is only allowed
-  when the `extern` is qualified as `unsafe`.
-
-[^fn-param-2015]: Function parameters with only a type are only allowed
-  in an associated function of a [trait item] in the 2015 edition.
-
 r[items.fn.intro]
 A _function_ consists of a [block] (that's the _body_ of the function),
 along with a name, a set of parameters, and an output type.
