@@ -11,9 +11,6 @@ EnumVariants -> EnumVariant ( `,` EnumVariant )* `,`?
 EnumVariant -> IDENTIFIER
 ```
 
-r[items.enum.syntax.note]
-> NOTE: Compared to Rust, this specification removes `EnumVariantTuple` (tuple-like enum variants are not supported). Only struct-like and unit-like variants are supported.
-
 r[items.enum.intro]
 An *enumeration*, also referred to as an *enum*, is a simultaneous definition of a
 nominal [enumerated type] as well as a set of *constructors*, that can be used
@@ -39,10 +36,7 @@ a = Animal::Cat;
 
 r[items.enum.unit-only]
 If an enum only contains unit variants, the enum is called an
-*<span id="unit-only-enum">unit-only enum</span>*. **In RCompiler, all `enum` variants are unit variants, except for `Option<T>` and `Result<T,E>`.** 
-
-r[items.enum.builtin]
-Enumerations with generic parameters `Option<T>` and `Result<T,E>` are builtin enums that are always available in the [value namespace]. They do not require an import or something like `Option::Some(42)`. Instead you can use `Some(42)` directly.
+*<span id="unit-only-enum">unit-only enum</span>*. **In RCompiler, all `enum` variants are unit variants.
 
 r[items.enum.constructor-names]
 Variant constructors are similar to [struct] definitions, and can be referenced by a path from the enumeration name.
