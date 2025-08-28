@@ -6,6 +6,11 @@ r[ub.items.structs]
 
 Tuple structs are not supported in this specification. The tuple-struct item form `struct Name(T1, T2, ...)` is invalid and outside the language. Any examples or rules referring to tuple struct items do not apply; only named-field structs and tuple-like enum variants are supported.
 
+r[ub.items.const-item]
+## Constant items
+
+There are no borrows (except `&str`), unnamed constants, const functions, or [ExpressionWithBlock]s in const expressions.
+
 r[ub.items.const-eval]
 ## Const evaluation
 

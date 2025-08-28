@@ -29,7 +29,7 @@ r[const-eval.const-expr.list]
 The following expressions are constant expressions, so long as any operands are also constant expressions.
 
 r[const-eval.const-expr.literal]
-* [Literals].
+* [Literals], including those with type `&str`.
 
 r[const-eval.const-expr.path-item]
 * [Paths] to [functions] and [constants].
@@ -45,7 +45,7 @@ r[const-eval.const-expr.field]
 * [Field] expressions.
 
 r[const-eval.const-expr.index]
-* Index expressions, [array indexing] or [slice] with a `usize`.
+* Index expressions, [array indexing] with a `usize`.
 
 r[const-eval.const-expr.builtin-arith-logic]
 * Built-in [negation], [arithmetic], [logical], [comparison] or [lazy boolean]
@@ -56,9 +56,6 @@ r[const-eval.const-expr.group]
 
 r[const-eval.const-expr.cast]
 * [Cast] expressions.
-
-r[const-eval.const-expr.if]
-* [if] expressions.
 
 The following expressions are *not* considered in constant expressions:
 
@@ -72,11 +69,14 @@ r[const-eval.const-expr.block]
 r[const-eval.const-expr.func]
 * Const functions.
 
+r[const-eval.const-expr.if]
+* [if] expressions.
+
 r[const-eval.const-expr.loop]
 * [loop] and [while] expressions.
 
 r[const-eval.const-expr.borrows]
-* All forms of [borrow]s.
+* All forms of [borrow]s, except `&str`.
 
 r[const-eval.const-expr.deref]
 * [Dereference] expressions.
@@ -99,11 +99,7 @@ r[const-eval.const-context.init]
   * [constants]
   * [enum variants]
 
-Const contexts that are used as parts of types (array type and repeat length
-expressions as well as const generic arguments) can only make restricted use of
-surrounding generic parameters: such an expression must either be a single bare
-const generic parameter, or an arbitrary expression not making use of any
-generics.
+Under const contexts, expressions must be const expressions and evaluated at compile time.
 
 r[const-eval.const-evaluation]
 ## Const evaluation

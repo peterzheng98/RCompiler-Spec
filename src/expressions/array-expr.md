@@ -50,10 +50,10 @@ An array expression of this form creates an array with the length of the value o
 That is, `[a; b]` creates an array containing `b` copies of the value of `a`.
 
 r[expr.array.repeat-copy]
-If the length operand has a value greater than 1 then this requires the repeat operand to have a type that implements [`Copy`], to be a [const block expression], or to be a [path] to a constant item.
+If the length operand has a value greater than 1 then this requires the repeat operand to have a type that implements [`Copy`], to be a [constant expression], or to be a [path] to a [constant item].
 
 r[expr.array.repeat-const-item]
-When the repeat operand is a const block or a path to a constant item, it is evaluated the number of times specified in the length operand.
+When the repeat operand is a [constant expression] or a [path] to a [constant item], it is evaluated the number of times specified in the length operand.
 
 r[expr.array.repeat-evaluation-zero]
 If that value is `0`, then the const block or constant item is not evaluated at all.

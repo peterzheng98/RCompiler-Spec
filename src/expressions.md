@@ -25,7 +25,6 @@ ExpressionWithoutBlock ->
 
 ExpressionWithBlock ->
         BlockExpression
-      | ConstBlockExpression
       | LoopExpression
       | IfExpression
 ```
