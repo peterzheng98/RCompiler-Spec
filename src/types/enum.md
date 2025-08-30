@@ -32,7 +32,8 @@ enum E { A, B }
 fn g(e: E) { }
 ```
 
-
+r[type.enum.comparison]
+Variants in the same `enum` can be compared for equality `==` and inequality `!=`.
 
 [^enumtype]: The `enum` type is analogous to a `data` constructor declaration in
              Haskell, or a *pick ADT* in Limbo.
