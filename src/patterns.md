@@ -14,14 +14,11 @@ PatternWithoutRange ->
     | PathPattern
 ```
 
-r[patterns.syntax.note]
-> NOTE: Compared to Rust, this specification removes `TupleStructPattern` (tuple struct patterns are not supported). Tuple types themselves and their tuple patterns are still supported.
-
 r[patterns.intro]
 Patterns are used to match values against structures and to, optionally, bind variables to values inside these structures.
-They are also used in variable declarations and parameters for functions and closures.
+They are also used in variable declarations and parameters for functions.
 
-The pattern in the following example does four things:
+<!-- The pattern in the following example does four things:
 
 * Tests if `person` has the `car` field filled with something.
 * Tests if the person's `age` field is between 13 and 19, and binds its value to the `person_age` variable.
@@ -54,7 +51,7 @@ if (let
 {
     println!("{} has a car and is {} years old.", person_name, person_age);
 }
-```
+``` -->
 
 r[patterns.usage]
 Patterns are used in:
@@ -150,7 +147,7 @@ r[patterns.ident]
 
 r[patterns.ident.syntax]
 ```grammar,patterns
-IdentifierPattern -> `ref`? `mut`? IDENTIFIER ( `@` PatternNoTopAlt )?
+IdentifierPattern -> `ref`? `mut`? IDENTIFIER
 ```
 
 r[patterns.ident.intro]
@@ -160,79 +157,31 @@ r[patterns.ident.unique]
 The identifier must be unique within the pattern.
 
 r[patterns.ident.scope]
-The variable will shadow any variables of the same name in scope.
-The [scope] of the new binding depends on the context of where the pattern is used (such as a `let` binding or a `match` arm).
+The variable will shadow any variables of the same name in [scope].
 
 r[patterns.ident.bare]
 Patterns that consist of only an identifier, possibly with a `mut`, match any value and bind it to that identifier.
 This is the most commonly used pattern in variable declarations and parameters for functions and closures.
 
-```rust
-let mut variable = 10;
-fn sum(x: i32, y: i32) -> i32 {
-#    x + y
-# }
-```
 
-r[patterns.ident.scrutinized]
-To bind the matched value of a pattern to a variable, use the syntax `variable @ subpattern`.
-For example, the following binds the value 2 to `e` (not the entire range: the range here is a range subpattern).
-
-```rust
-let x = 2;
-
-match x {
-    e @ 1 ..= 5 => println!("got a range element {}", e),
-    _ => println!("anything"),
-}
-```
 
 r[patterns.ident.move]
-By default, identifier patterns bind a variable to a copy of or move from the matched value depending on whether the matched value implements [`Copy`].
+By default, identifier patterns bind a variable to a copy of or pass a reference from the matched value depending on whether the matched value implements [`Copy`]. So for user-defined structs, the binding will pass a reference.
+
+```rust
+struct Foo {
+    x: i32,
+    y: i32,
+}
+let mut d: Foo = Foo { x: 1, y: 2 };
+let e: Foo = d; // equivalent to `let ref e: Foo = d;`
+```
 
 r[patterns.ident.ref]
-This can be changed to bind to a reference by using the `ref` keyword, or to a mutable reference using `ref mut`. For example:
-
-```rust
-# let a = Some(10);
-match a {
-    None => (),
-    Some(value) => (),
-}
-
-match a {
-    None => (),
-    Some(ref value) => (),
-}
-```
-
-In the first match expression, the value is copied (or moved).
-In the second match, a reference to the same memory location is bound to the variable value.
-This syntax is needed because in destructuring subpatterns the `&` operator can't be applied to the value's fields.
-For example, the following is not valid:
-
-```rust,compile_fail
-# struct Person {
-#    name: String,
-#    age: u8,
-# }
-# let value = Person { name: String::from("John"), age: 23 };
-if (let Person { name: &person_name, age: 18..=150 } = value) { }
-```
-
-To make it valid, write the following:
-
-```rust
-# struct Person {
-#    name: String,
-#    age: u8,
-# }
-# let value = Person { name: String::from("John"), age: 23 };
-if (let Person { name: ref person_name, age: 18..=150 } = value) { }
-```
+We also allow binding to a reference by using the `ref` keyword, or to a mutable reference using `ref mut`.
 
 r[patterns.ident.ref-ignored]
-Thus, `ref` is not something that is being matched against.
+`ref` is not something that is being matched against.
 Its objective is exclusively to make the matched binding a reference, instead of potentially copying or moving what was matched.
 
 r[patterns.ident.precedent]
@@ -240,92 +189,6 @@ r[patterns.ident.precedent]
 
 r[patterns.ident.constraint]
 It is an error if `ref` or `ref mut` is specified and the identifier shadows a constant.
-
-r[patterns.ident.refutable]
-Identifier patterns are irrefutable if the `@` subpattern is irrefutable or the subpattern is not specified.
-
-r[patterns.ident.binding]
-### Binding modes
-
-r[patterns.ident.binding.intro]
-To service better ergonomics, patterns operate in different *binding modes* in order to make it easier to bind references to values.
-When a reference value is matched by a non-reference pattern, it will be automatically treated as a `ref` or `ref mut` binding.
-Example:
-
-```rust
-let x: &Option<i32> = &Some(3);
-if (let Some(y) = x) {
-    // y was converted to `ref y` and its type is &i32
-}
-```
-
-r[patterns.ident.binding.non-reference]
-*Non-reference patterns* include all patterns except bindings, [wildcard patterns](#wildcard-pattern) (`_`), [`const` patterns](#path-patterns) of reference types, and [reference patterns](#reference-patterns).
-
-r[patterns.ident.binding.default-mode]
-If a binding pattern does not explicitly have `ref`, `ref mut`, or `mut`, then it uses the *default binding mode* to determine how the variable is bound.
-
-r[patterns.ident.binding.move]
-The default binding mode starts in "move" mode which uses move semantics.
-
-r[patterns.ident.binding.top-down]
-When matching a pattern, the compiler starts from the outside of the pattern and works inwards.
-
-r[patterns.ident.binding.auto-deref]
-Each time a reference is matched using a non-reference pattern, it will automatically dereference the value and update the default binding mode.
-
-r[patterns.ident.binding.ref]
-References will set the default binding mode to `ref`.
-
-r[patterns.ident.binding.ref-mut]
-Mutable references will set the mode to `ref mut` unless the mode is already `ref` in which case it remains `ref`.
-
-r[patterns.ident.binding.nested-references]
-If the automatically dereferenced value is still a reference, it is dereferenced and this process repeats.
-
-r[patterns.ident.binding.mode-limitations-binding]
-The binding pattern may only explicitly specify a `ref` or `ref mut` binding mode, or specify mutability with `mut`, when the default binding mode is "move". For example, these are not accepted:
-
-```rust,edition2024,compile_fail
-let [mut x] = &[()]; //~ ERROR
-let [ref x] = &[()]; //~ ERROR
-let [ref mut x] = &mut [()]; //~ ERROR
-```
-
-r[patterns.ident.binding.mode-limitations.edition2024]
-> [!EDITION-2024]
-> Before the 2024 edition, bindings could explicitly specify a `ref` or `ref mut` binding mode even when the default binding mode was not "move", and they could specify mutability on such bindings with `mut`. In these editions, specifying `mut` on a binding set the binding mode to "move" regardless of the current default binding mode.
-
-r[patterns.ident.binding.mode-limitations-reference]
-Similarly, a reference pattern may only appear when the default binding mode is "move". For example, this is not accepted:
-
-```rust,edition2024,compile_fail
-let [&x] = &[&()]; //~ ERROR
-```
-
-r[patterns.ident.binding.mode-limitations-reference.edition2024]
-> [!EDITION-2024]
-> Before the 2024 edition, reference patterns could appear even when the default binding mode was not "move", and had both the effect of matching against the scrutinee and of causing the default binding mode to be reset to "move".
-
-r[patterns.ident.binding.mixed]
-Move bindings and reference bindings can be mixed together in the same pattern.
-Doing so will result in partial move of the object bound to and the object cannot be used afterwards.
-This applies only if the type cannot be copied.
-
-In the example below, `name` is moved out of `person`.
-Trying to use `person` as a whole or `person.name` would result in an error because of *partial move*.
-
-Example:
-
-```rust
-# struct Person {
-#    name: String,
-#    age: u8,
-# }
-# let person = Person{ name: String::from("John"), age: 23 };
-// `name` is moved from person and `age` referenced
-let Person { name, ref age } = person;
-```
 
 r[patterns.wildcard]
 ## Wildcard pattern
