@@ -10,8 +10,7 @@ StructExprFields ->
     StructExprField (`,` StructExprField)* `,`?
 
 StructExprField ->
-        IDENTIFIER
-      | IDENTIFIER `:` Expression
+      IDENTIFIER `:` Expression
 
 ```
 
