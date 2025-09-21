@@ -148,13 +148,10 @@ r[expr.place-value.place-context]
 The following contexts are *place expression* contexts:
 
 * The left operand of a [compound assignment] expression.
-* The operand of a unary [borrow], [raw borrow] or [dereference][deref] operator.
+* The operand of a unary [borrow] or [dereference][deref] operator.
 * The operand of a field expression.
 * The indexed operand of an array indexing expression.
 * The operand of any [implicit borrow].
-* The initializer of a [let statement].
-* The [scrutinee] of an [`if let`], [`match`][match], or [`while let`]
-  expression.
 * The base of a [functional update] struct expression.
 
 > [!NOTE]
@@ -166,7 +163,6 @@ Explicitly, the assignee expressions are:
 
 - Place expressions.
 - [Underscores].
-- [Slices][expr.array.index] of assignee expressions.
 - [Structs] of assignee expressions (with optionally named
   fields).
 - [Unit structs]

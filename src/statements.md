@@ -58,40 +58,20 @@ r[statement.let]
 r[statement.let.syntax]
 ```grammar,statements
 LetStatement ->
-    `let` PatternNoTopAlt `:` Type
-    ( `=` Expression )? `;`
+    `let` PatternNoTopAlt `:` Type `=` Expression `;`
 ```
 
 r[statement.let.intro]
-A *`let` statement* introduces a new set of [variables], given by a [pattern].
-The pattern is followed by a type annotation and then either ends, or is followed by an initializer expression. Such type annotation should be visible from the `let` declaration.
+A *`let` statement* introduces a new variable, given by a [pattern].
 
 r[statement.let.inference]
-Your compiler shall not perfoem any type inference on the type of the pattern.
-The type of the pattern must be explicitly specified by a type annotation, except underscore type.
+The type of the pattern must be explicitly specified by a type annotation.
 
 r[statement.let.scope]
 Any variables introduced by a variable declaration are visible from the point of declaration until the end of the enclosing block scope, except when they are shadowed by another variable declaration.
 
-<!-- r[statement.let.constraint]
-If an `else` block is not present, the pattern must be irrefutable.
-If an `else` block is present, the pattern may be refutable.
-
-r[statement.let.behavior]
-If the pattern does not match (this requires it to be refutable), the `else` block is executed.
-The `else` block must always diverge (evaluate to the [never type]).
-
-```rust
-let (mut v, w) = (vec![1, 2, 3], 42); // The bindings may be mut or const
-let Some(t) = v.pop() else { // Refutable patterns require an else block
-    panic!(); // The else block must diverge
-};
-let [u, v] = [v[0], v[1]] else { // This pattern is irrefutable, so the compiler
-                                 // will lint as the else block is redundant.
-    panic!();
-};
-``` -->
-<!-- we have no never type -->
+r[statement.let.initializer]
+The initializer expression is always present for simplification.
 
 r[statement.expr]
 ## Expression statements
@@ -151,7 +131,7 @@ if true {
 [never type]: types/never.md
 [canonical path]: paths.md#canonical-paths
 [implementations]: items/implementations.md
-[variables]: variables.md
+[variable]: variables.md
 [outer attributes]: attributes.md
 [`cfg`]: conditional-compilation.md
 [the lint check attributes]: attributes/diagnostics.md#lint-check-attributes
