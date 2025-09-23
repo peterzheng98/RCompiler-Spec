@@ -15,11 +15,9 @@ FunctionParameters ->
       SelfParam `,`?
     | (SelfParam `,`)? FunctionParam (`,` FunctionParam)* `,`?
 
-SelfParam -> ( ShorthandSelf | TypedSelf )
+SelfParam -> ShorthandSelf
 
 ShorthandSelf -> `&`? `mut`? `self`
-
-TypedSelf -> `mut`? `self` `:` Type
 
 FunctionParam -> PatternNoTopAlt `:` Type
 
