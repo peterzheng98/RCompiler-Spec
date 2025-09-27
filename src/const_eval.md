@@ -17,13 +17,8 @@ r[const-eval.const-expr.const-context]
 In [const contexts](#const-context), these are the only allowed
 expressions, and are always evaluated at compile time.
 
-r[const-eval.const-expr.runtime-context]
-In other places, such as [let statements], constant expressions *may* be, but are not guaranteed to be, evaluated at compile time.
-
 r[const-eval.const-expr.error]
-Behaviors such as out of bounds [array indexing] or [overflow] are compiler errors if the value
-must be evaluated at compile time (i.e. in const contexts). Otherwise, these
-behaviors are warnings, but will likely panic at run-time.
+Behaviors such as out of bounds [array indexing] or [overflow] are compiler errors in const contexts.
 
 r[const-eval.const-expr.list]
 The following expressions are constant expressions, so long as any operands are also constant expressions.
@@ -32,32 +27,23 @@ r[const-eval.const-expr.literal]
 * [Literals], including those with type `&str`.
 
 r[const-eval.const-expr.path-item]
-* [Paths] to [functions] and [constants].
+* [Paths] to [constants] and [constants].
   Recursively defining constants is not allowed.
 
 r[const-eval.const-expr.array]
 * [Array expressions].
 
-r[const-eval.const-expr.constructor]
-* [Struct] expressions.
-
-r[const-eval.const-expr.field]
-* [Field] expressions.
-
 r[const-eval.const-expr.index]
 * Index expressions, [array indexing] with a `usize`.
 
 r[const-eval.const-expr.builtin-arith-logic]
-* Built-in [negation], [arithmetic], [logical], [comparison] or [lazy boolean]
+* Built-in [negation] or [arithmetic]
   operators used on integer types, `bool`, and `char`.
 
 r[const-eval.const-expr.group]
 * [Grouped] expressions.
 
-r[const-eval.const-expr.cast]
-* [Cast] expressions.
-
-The following expressions are *not* considered in constant expressions:
+The following expressions are *never* used in constant expressions:
 
 r[const-eval.const-expr.block]
 * [Block expressions]
@@ -68,6 +54,12 @@ r[const-eval.const-expr.block]
 
 r[const-eval.const-expr.func]
 * Const functions.
+
+r[const-eval.const-expr.field]
+* [Field] expressions.
+
+r[const-eval.const-expr.constructor]
+* [Struct] expressions.
 
 r[const-eval.const-expr.if]
 * [if] expressions.
@@ -80,6 +72,12 @@ r[const-eval.const-expr.borrows]
 
 r[const-eval.const-expr.deref]
 * [Dereference] expressions.
+
+r[const-eval.const-expr.cast]
+* [Cast] expressions.
+
+r[const-eval.const-expr.builtin-logic]
+* Built-in [logical], [lazy boolean] or [comparison] operators used on integer types, `bool`, and `char`.
 
 r[const-eval.const-context]
 ## Const context
@@ -97,7 +95,6 @@ r[const-eval.const-context.repeat-length]
 r[const-eval.const-context.init]
 * The initializer of
   * [constants]
-  * [enum variants]
 
 Under const contexts, expressions must be const expressions and evaluated at compile time.
 
