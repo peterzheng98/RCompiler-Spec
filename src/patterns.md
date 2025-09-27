@@ -8,7 +8,6 @@ PatternNoTopAlt ->
 
 PatternWithoutRange ->
       IdentifierPattern
-    | WildcardPattern
     | ReferencePattern
 ```
 
@@ -87,55 +86,6 @@ Its objective is exclusively to make the matched binding a reference, instead of
 
 r[patterns.ident.constraint]
 It is an error if `ref` or `ref mut` is specified and the identifier shadows a constant.
-
-r[patterns.wildcard]
-## Wildcard pattern
-
-r[patterns.wildcard.syntax]
-```grammar,patterns
-WildcardPattern -> `_`
-```
-
-r[patterns.wildcard.intro]
-The _wildcard pattern_ (an underscore symbol) matches any value.
-It is used to ignore values when they don't matter.
-
-r[patterns.wildcard.struct-matcher]
-Inside other patterns it matches a single data field (as opposed to the `..` which matches the remaining fields).
-
-r[patterns.wildcard.no-binding]
-Unlike identifier patterns, it does not copy, move or borrow the value it matches.
-
-Examples:
-
-```rust
-# let x = 20;
-let (a, _) = (10, x);   // the x is always matched by _
-# assert_eq!(a, 10);
-
-// ignore a function/closure param
-let real_part = |a: f64, _: f64| { a };
-
-// ignore a field from a struct
-# struct RGBA {
-#    r: f32,
-#    g: f32,
-#    b: f32,
-#    a: f32,
-# }
-# let color = RGBA{r: 0.4, g: 0.1, b: 0.9, a: 0.5};
-let RGBA{r: red, g: green, b: blue, a: _} = color;
-# assert_eq!(color.r, red);
-# assert_eq!(color.g, green);
-# assert_eq!(color.b, blue);
-
-// accept any Some, with any value
-# let x = Some(10);
-if (let Some(_) = x) {}
-```
-
-r[patterns.wildcard.refutable]
-The wildcard pattern is always irrefutable.
 
 r[patterns.ref]
 ## Reference patterns

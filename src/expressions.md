@@ -21,7 +21,6 @@ ExpressionWithoutBlock ->
       | ContinueExpression
       | BreakExpression
       | ReturnExpression
-      | UnderscoreExpression
 
 ExpressionWithBlock ->
         BlockExpression

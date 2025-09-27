@@ -47,7 +47,6 @@
         - [Loop expressions](expressions/loop-expr.md)
         - [If expressions](expressions/if-expr.md)
         - [Return expressions](expressions/return-expr.md)
-        - [Underscore expressions](expressions/underscore-expr.md)
 
 - [Patterns](patterns.md)
 
